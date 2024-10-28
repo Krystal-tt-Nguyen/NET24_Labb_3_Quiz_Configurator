@@ -11,68 +11,57 @@
     <Menu>
         <!--mnu:File-->
         <MenuItem Header="_File">
-            <MenuItem x:Name="miNewQuestionPack"
-                      Header="_New Question Pack"
+            <MenuItem Header="_New Question Pack"
                       Icon="{fa:Icon FolderPlus}"/>
+   
             
-            <MenuItem x:Name="miSelectQuestionPack"
-                      Header="_Select Question Pack"
+            <MenuItem Header="_Select Question Pack"
                       Icon="{fa:Icon FolderOpen}">
-                <MenuItem x:Name="miDefault"
-                          Header="_Default Question Pack (Medium)"/>
+                <MenuItem Header="_Default Question Pack (Medium)"/>
             </MenuItem>
 
-            <MenuItem x:Name="miDeleteQuestionPack"
-                      Header="_Delete Question Pack"
+            <MenuItem Header="_Delete Question Pack"
                       Icon="{fa:Icon FolderMinus}"/>
             <Separator/>
 
-            <MenuItem x:Name="miImportQuetions"
-                      Header="_Import Questions"
+            <MenuItem Header="_Import Questions"
                       Icon="{fa:Icon CloudArrowDown}"
                       InputGestureText="Ctrl+I"/>
             <Separator/>
 
-            <MenuItem x:Name="miExit"
-                      Header="E_xit"
+            <MenuItem Header="E_xit"
                       Icon="{fa:Icon DoorOpen}"
                       InputGestureText="Alt+F4"/>
         </MenuItem>
 
         <!--mnu:Edit-->
         <MenuItem Header="_Edit">
-            <MenuItem x:Name="miAddQuestions"
-                      Header="_Add Questions"
+            <MenuItem Header="_Add Questions"
                       Icon="{fa:Icon Plus}"
                       InputGestureText="Insert"/>
 
-            <MenuItem x:Name="miRemoveQuestions"
-                      Header="_Remove Questions"
+            <MenuItem Header="_Remove Questions"
                       Icon="{fa:Icon Minus}"
                       InputGestureText="Delete"/>
 
-            <MenuItem x:Name="miPackOptions"
-                      Header="Pack _Options"
+            <MenuItem Header="Pack _Options"
                       Icon="{fa:Icon Sliders}"
                       InputGestureText="Ctrl+O"/>
         </MenuItem>
 
         <!--mnu:View-->
         <MenuItem Header="_View">
-            <MenuItem x:Name="miPlay"
-                      Command="{Binding SwitchToPlayerViewCommand}"
+            <MenuItem Command="{Binding SwitchToPlayerViewCommand}"
                       Header="_Play"
                       Icon="{fa:Icon Play}"
                       InputGestureText="Ctrl+P"/>
 
-            <MenuItem x:Name="miEdit"
-                      Header="_Edit"
+            <MenuItem Header="_Edit"
                       Icon="{fa:Icon Gears}"
                       InputGestureText="Ctrl+E"/>
             <Separator/>
 
-            <MenuItem x:Name="miFullscreen"
-                      Header="_Fullscreen"
+            <MenuItem Header="_Fullscreen"
                       Icon="{fa:Icon Expand}"
                       InputGestureText="Alt+Enter"/>
         </MenuItem>

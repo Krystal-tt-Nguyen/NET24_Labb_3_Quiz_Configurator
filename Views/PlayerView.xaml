@@ -24,14 +24,14 @@
         </Grid.ColumnDefinitions>
 
         <!--Timer-->
-        <Label  x:Name="lbTimer"
-                Content="X"
+        <TextBlock  x:Name="lbTimer"
+                Text="X"
                 Grid.Column="2"
                 FontSize="32"
                 FontWeight="Bold"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
-        </Label>
+        </TextBlock>
 
         <!--Question Pack-->
         <Label x:Name="lbQuestionPackName"

@@ -10,7 +10,7 @@ namespace Laboration_3.Model
         public int TimeLimitInSeconds { get; set; }
         public List<Question> Questions { get; set; }
 
-        public QuestionPack(string name, Difficulty difficulty = Difficulty.Medium, int timeLimitInSeconds = 30)
+        public QuestionPack(string name = "<PackName>", Difficulty difficulty = Difficulty.Medium, int timeLimitInSeconds = 30)
         {
             Name = name;
             Difficulty = difficulty;

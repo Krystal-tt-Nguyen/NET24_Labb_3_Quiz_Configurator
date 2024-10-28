@@ -24,8 +24,8 @@ namespace Laboration_3.ViewModel
 			}
 		}
 
-		private object _currentView;
-		public object CurrentView
+		private object? _currentView;
+		public object? CurrentView
 		{
 			get => _currentView; 
 			set 
@@ -38,24 +38,21 @@ namespace Laboration_3.ViewModel
 			}
 		}
 
-        public ICommand SwitchToPlayerViewCommand { get; }
-        public ICommand SwitchToResultViewCommand { get; }
-
+        public DelegateCommand SwitchToPlayerViewCommand { get; }
 
         public MainWindowViewModel()
         {
-			// Ange default vy vid programstart
 			CurrentView = new ConfigurationView();
+
+			ActivePack = new QuestionPackViewModel(new QuestionPack("Default Question Pack"));
 
             ConfigurationViewModel = new ConfigurationViewModel(this);
 			PlayerViewModel = new PlayerViewModel(this);
-
-            SwitchToPlayerViewCommand = new DelegateCommand(c => SwitchToPlayerView());
-            //SwitchToResultViewCommand = new DelegateCommand(c => SwitchToResultView());
+            
+			SwitchToPlayerViewCommand = new DelegateCommand(c => SwitchToPlayerView());
         }
 
 		public void SwitchToPlayerView() => CurrentView = new PlayerView();
-		//public void SwitchToResultView() => CurrentView = new ResultView();
 
     }
 }

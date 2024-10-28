@@ -8,11 +8,11 @@ namespace Laboration_3.Model
         public string[] IncorrectAnswers { get; set; }
 
         public Question(string query, string correctAnswer, 
-            string incorectAnswer1, string incorectAnswer2, string incorectAnswer3)
+            string incorrectAnswer1, string incorrectAnswer2, string incorrectAnswer3)
         {
             Query = query;
             CorrectAnswer = correctAnswer;
-            IncorrectAnswers = new string[3] {incorectAnswer1, incorectAnswer2, incorectAnswer3 };
+            IncorrectAnswers = new string[3] {incorrectAnswer1, incorrectAnswer2, incorrectAnswer3 };
         }
 
     }

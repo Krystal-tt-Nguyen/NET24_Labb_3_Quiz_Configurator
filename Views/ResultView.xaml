@@ -30,33 +30,23 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Label x:Name="lbComplete"
-             Content="Complete!"
-             FontSize="36"
-             FontWeight="Bold"
-             Grid.Row="0"
-             HorizontalAlignment="Center"
-             VerticalAlignment="Bottom">
+            <Label Content="Complete!"
+                   FontSize="36" FontWeight="Bold" Grid.Row="0"
+                   HorizontalAlignment="Center" VerticalAlignment="Bottom">
             </Label>
 
-            <Label x:Name="lbResult"
-             Content="You got X of X questions"
-             FontSize="24"
-             Grid.Row="1"
-             HorizontalAlignment="Center"
-             VerticalAlignment="Top">
+            <Label Content="You got X of X questions"
+                   FontSize="24" Grid.Row="1"
+                   HorizontalAlignment="Center" VerticalAlignment="Top">
             </Label>
         </Grid>
 
 
         <!--Btn-->
-        <Button x:Name="btnRestart" 
-            Background="White"
+        <Button Background="White"
             FontSize="20"
-            Grid.Column="1"
-            Grid.Row="02"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top"
+            Grid.Column="1" Grid.Row="02"
+            HorizontalAlignment="Center" VerticalAlignment="Top"
             Padding="20 5">
             
             <Button.Content>

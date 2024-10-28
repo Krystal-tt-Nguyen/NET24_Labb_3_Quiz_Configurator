@@ -15,23 +15,6 @@ namespace Laboration_3
             InitializeComponent();
             DataContext = new MainWindowViewModel();
         }
-
-        private void CustomTitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ButtonState == MouseButtonState.Pressed && e.ChangedButton == MouseButton.Left)
-            {
-                DragMove();
-            }
-        }
-
-        private void btnMinimize_Click(object sender, RoutedEventArgs e)
-            => WindowState = (WindowState == WindowState.Normal) ? WindowState.Minimized : WindowState.Normal;
-
-        private void btnFullscreen_Click(object sender, RoutedEventArgs e) 
-            => WindowState = (WindowState == WindowState.Normal) ? WindowState.Maximized : WindowState.Normal;
-
-        private void btnClose_Click(object sender, RoutedEventArgs e) => Close();
-
     }
 
 }

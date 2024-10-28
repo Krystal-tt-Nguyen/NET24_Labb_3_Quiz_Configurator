@@ -21,54 +21,41 @@
             <RowDefinition Height="3*"/>
         </Grid.RowDefinitions>
 
-        <!--Default Question Pack: Label and Button-->
+        <!--Default Question Pack-->
         <Grid Grid.Row ="0" Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
+            <!--Ska label vara hårdkodad?-->
             <Label Content="Default Question Pack"
-               Grid.Column="0" 
-               Grid.Row="0"                 
-               FontWeight="Bold"
-               Margin="5 0 0 0"
-               VerticalAlignment="Bottom"/>
+               Grid.Column="0" Grid.Row="0" VerticalAlignment="Bottom"            
+               FontWeight="Bold" Margin="5 0 0 0"/>
 
-            <StackPanel Grid.Column="1"
-                        Grid.Row="0"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Bottom">
+            <StackPanel Grid.Column="1" Grid.Row="0"
+                        Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
 
-                <Button x:Name="btnOptions"
-                        Background="Transparent"
-                        BorderBrush="Transparent"
-                        Height="20" 
-                        Width="20"
-                        Margin="5">
+                <Button Background="Transparent" BorderBrush="Transparent"
+                        Height="20" Width="20" Margin="3">
                     <Button.Content>
                         <fa:IconBlock Icon="Sliders"/>
                     </Button.Content>
                 </Button>
 
-                <Button x:Name="btnAdd"
-                         Background="Transparent"
-                         BorderBrush="Transparent"
-                         Height="20" 
-                         Width="20"
-                         Margin="5">
+                <Button Background="Transparent" BorderBrush="Transparent"
+                        Command="{Binding AddQuestionCommand, UpdateSourceTrigger=PropertyChanged}"
+                        Height="20" Width="20" Margin="3">
                     <Button.Content>
                         <fa:IconBlock Icon="Plus"/>
                     </Button.Content>
                 </Button>
 
-                <Button x:Name="btnRemove" 
-                        Background="Transparent"
-                        BorderBrush="Transparent"
-                        Height="20" 
-                        Width="20" 
-                        Margin="5">
+                <Button Background="Transparent" BorderBrush="Transparent"
+                        Command="{Binding RemoveQuestionCommand, UpdateSourceTrigger=PropertyChanged}"
+                        Height="20" Width="20" Margin="3 3 10 3"
+                        IsEnabled="{Binding buttonIsEnable}"
+                        Visibility="Visible">
                     <Button.Content>
                         <fa:IconBlock Icon="Minus"/>
                     </Button.Content>
@@ -77,60 +64,55 @@
             </StackPanel>
         </Grid>
 
-        <!--Default Question Pack: ListBox-->
-        <ListBox x:Name="lbQuestionPack"
-                 Grid.Column="0" 
-                 Grid.Row="1" 
-                 Grid.RowSpan="2" 
-                 Margin="10 0 10 10"/>
+        <ListBox Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" Margin="10 0 10 10"
+                 ItemsSource="{Binding ActivePack.Questions}" 
+                 SelectedItem="{Binding SelectedQuestion}">
 
-        <!--Questions: Label and TextBox-->
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="Question" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding Query}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!--Questions-->
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Label Content="Questions" 
-                   FontWeight="Bold"
-                   Grid.Column="1"
-                   Grid.Row="0"
-                   Margin="15 -10 20 0"/>
+            <Label Content="Questions" FontWeight="Bold"
+                   Grid.Column="1" Grid.Row="0"
+                   Margin="15 -10 20 0"
+                   Visibility="{Binding ElementName=spAnswers, Path=Visibility}"/>
 
-            <TextBox x:Name="tbQuestions"
-                     Grid.Column="1"
-                     Grid.Row="1"
-                     Margin="20 0"
-                     Padding="5"/>
+            <TextBox Grid.Column="1" Grid.Row="1" Margin="20 0" Padding="5"
+                     Text ="{Binding SelectedQuestion.Query, UpdateSourceTrigger=PropertyChanged}" 
+                     Visibility="{Binding ElementName=spAnswers, Path=Visibility}"/>
         </Grid>
 
-        <!--Answers: Label and Listbox-->
-        <StackPanel Grid.Column="1" 
-                    Grid.Row="2"
-                    Margin="20 0">
-            
-            <Label Content="Correct Answer" 
-                   FontWeight="Bold"
-                   Margin="-5 30 0 0"/>
-            <TextBox x:Name="tbCorrectAnswer"
+        <StackPanel x:Name="spAnswers"
+                    Grid.Column="1" Grid.Row="2" Margin="20 0"
+                    Visibility="Visible">
+
+            <Label Content="Correct Answer" FontWeight="Bold" Margin="-5 30 0 0"/>
+            <TextBox Text ="{Binding SelectedQuestion.CorrectAnswer}"
                      Padding="2"/>
 
-            <Label Content="First Incorrect Answer" 
-                   FontWeight="Bold"
-                   Margin="-5 0 0 0"/>
-            <TextBox x:Name="tb1stIncorrectAnswer"
+            <Label Content="First Incorrect Answer" FontWeight="Bold" Margin="-5 0 0 0"/>
+            <TextBox Text ="{Binding SelectedQuestion.IncorrectAnswers[0]}"
                      Padding="2"/>
 
-            <Label Content="Second Incorrect Answer" 
-                   FontWeight="Bold"
-                   Margin="-5 0 0 0"/>
-            <TextBox x:Name="tb2ndIncorrectAnswer"
+            <Label Content="Second Incorrect Answer" FontWeight="Bold" Margin="-5 0 0 0"/>
+            <TextBox Text ="{Binding SelectedQuestion.IncorrectAnswers[1]}"
                      Padding="2"/>
 
-            <Label Content="Third Incorrect Answer" 
-                   FontWeight="Bold"
-                   Margin="-5 0 0 0"/>
-            <TextBox x:Name="tb3rdIncorrectAnswer"
+            <Label Content="Third Incorrect Answer" FontWeight="Bold" Margin="-5 0 0 0"/>
+            <TextBox Text ="{Binding SelectedQuestion.IncorrectAnswers[2]}"
                      Padding="2"/>
             
         </StackPanel>
