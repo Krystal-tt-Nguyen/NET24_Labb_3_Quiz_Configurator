@@ -1,5 +1,6 @@
 ﻿using Laboration_3.Command;
 using Laboration_3.Model;
+using Laboration_3.Dialogs;
 using Laboration_3.ViewModel;
 using System.Windows;
 using System.Windows.Input;
@@ -12,6 +13,17 @@ namespace Laboration_3.ViewModel
         public QuestionPackViewModel? ActivePack { get => mainWindowViewModel.ActivePack; }
 
 
+        private bool _removeQuestionIsEnable;
+        public bool RemoveQuestionIsEnable
+        {
+            get => _removeQuestionIsEnable;
+            set 
+            {
+                _removeQuestionIsEnable = value; 
+                RaisePropertyChanged();
+            }
+        }
+
         private Question? _selectedQuestion;
         public Question? SelectedQuestion
         {
@@ -23,30 +35,22 @@ namespace Laboration_3.ViewModel
             }
         }
 
-        private bool _buttonisEnable;
-        public bool buttonIsEnable
-        {
-            get => _buttonisEnable;
-            set 
-            {
-                _buttonisEnable = value; 
-                RaisePropertyChanged();
-            }
-        }
-
 
         public DelegateCommand AddQuestionCommand { get; }
         public DelegateCommand RemoveQuestionCommand { get; }
+        public DelegateCommand EditPackOptionsCommand { get; }
 
 
         public ConfigurationViewModel(MainWindowViewModel? mainWindowViewModel)
         {
             this.mainWindowViewModel = mainWindowViewModel;
-            buttonIsEnable = false;
+            RemoveQuestionIsEnable = false;
+
             SelectedQuestion = ActivePack?.Questions.FirstOrDefault();
             
             AddQuestionCommand = new DelegateCommand(AddQuestion); 
             RemoveQuestionCommand = new DelegateCommand(RemoveQuestion, IsButtonEnable);
+            EditPackOptionsCommand = new DelegateCommand(EditPackOptions);
         }
 
         public void AddQuestion(object? obj)
@@ -59,15 +63,17 @@ namespace Laboration_3.ViewModel
             ActivePack?.Questions.Remove(SelectedQuestion);
             RemoveQuestionCommand.RaiseCanExecuteChanged();
         }
-        public bool IsButtonEnable(object? obj) => buttonIsEnable = (ActivePack?.Questions.Count > 0) ? true : false;
-        public void EditPackOptions()
+        public bool IsButtonEnable(object? obj) => RemoveQuestionIsEnable = (ActivePack?.Questions.Count > 0) ? true : false;
+        public void EditPackOptions(object? obj)
         {
-            
+            var packOptionsDialog = new PackOptionsDialog();
+            packOptionsDialog.Owner = Application.Current.MainWindow;
+            packOptionsDialog.Show();
         }
-        
-      
+
     }
 }
 
-
+//Focus
+//SelectedQuestion = (ActivePack?.Questions.Count > 0) ? ActivePack.Questions.First() : null;
 

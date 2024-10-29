@@ -38,21 +38,58 @@ namespace Laboration_3.ViewModel
 			}
 		}
 
+        private bool _removePackIsEnable;
+        public bool RemovePackIsEnable
+        {
+            get => _removePackIsEnable;
+            set
+            {
+                _removePackIsEnable = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+        public DelegateCommand AddPackCommand { get; }
+        public DelegateCommand RemovePackCommand { get; }
         public DelegateCommand SwitchToPlayerViewCommand { get; }
+
 
         public MainWindowViewModel()
         {
-			CurrentView = new ConfigurationView();
+            RemovePackIsEnable = false;
 
 			ActivePack = new QuestionPackViewModel(new QuestionPack("Default Question Pack"));
 
+            CurrentView = new ConfigurationView();
             ConfigurationViewModel = new ConfigurationViewModel(this);
 			PlayerViewModel = new PlayerViewModel(this);
-            
-			SwitchToPlayerViewCommand = new DelegateCommand(c => SwitchToPlayerView());
+
+            AddPackCommand = new DelegateCommand(AddPack);
+            RemovePackCommand = new DelegateCommand(RemovePack, IsRemovePackEnable);
+            SwitchToPlayerViewCommand = new DelegateCommand(SwitchToPlayerView);
         }
 
-		public void SwitchToPlayerView() => CurrentView = new PlayerView();
+        private void AddPack(object? obj)
+        {
+            Packs.Add(new QuestionPackViewModel(new QuestionPack()));
+            RemovePackCommand.RaiseCanExecuteChanged();
+        }
+        private void RemovePack(object? obj)
+        {
+            Packs.Remove(ActivePack);
+            RemovePackCommand.RaiseCanExecuteChanged();
+        }
+        private bool IsRemovePackEnable(object? obj) => Packs.Count > 0 ? true : false;
+
+        public void SwitchToPlayerView(object? obj) => CurrentView = new PlayerView();
 
     }
+
+
 }
+
+
+//public  DelegateCommand SwitchToResultViewCommand { get; }
+//SwitchToResultViewCommand = new DelegateCommand(c => SwitchToResultView());
+//public void SwitchToResultView() => CurrentView = new ResultView();

@@ -11,16 +11,21 @@
     <Menu>
         <!--mnu:File-->
         <MenuItem Header="_File">
-            <MenuItem Header="_New Question Pack"
+            <MenuItem Command="{Binding AddPackCommand}"
+                      Header="_New Question Pack"
                       Icon="{fa:Icon FolderPlus}"/>
    
             
             <MenuItem Header="_Select Question Pack"
-                      Icon="{fa:Icon FolderOpen}">
+                      Icon="{fa:Icon FolderOpen}"
+                      ItemsSource="{Binding Packs}">
+                <!--<MenuItem Header="Default Question Pack (Medium)"/>-->
                 <MenuItem Header="_Default Question Pack (Medium)"/>
             </MenuItem>
 
-            <MenuItem Header="_Delete Question Pack"
+            <MenuItem Command="{Binding RemovePackCommand}"
+                      Header="_Delete Question Pack"
+                      IsEnabled="{Binding RemovePackIsEnable}"
                       Icon="{fa:Icon FolderMinus}"/>
             <Separator/>
 
@@ -36,15 +41,18 @@
 
         <!--mnu:Edit-->
         <MenuItem Header="_Edit">
-            <MenuItem Header="_Add Questions"
+            <MenuItem Command="{Binding ConfigurationViewModel.AddQuestionCommand}"
+                      Header="_Add Questions"
                       Icon="{fa:Icon Plus}"
                       InputGestureText="Insert"/>
 
-            <MenuItem Header="_Remove Questions"
+            <MenuItem Command="{Binding ConfigurationViewModel.RemoveQuestionCommand}"
+                      Header="_Remove Questions"
                       Icon="{fa:Icon Minus}"
                       InputGestureText="Delete"/>
 
-            <MenuItem Header="Pack _Options"
+            <MenuItem Command="{Binding ConfigurationViewModel.EditPackOptionsCommand}"
+                      Header="Pack _Options"
                       Icon="{fa:Icon Sliders}"
                       InputGestureText="Ctrl+O"/>
         </MenuItem>
