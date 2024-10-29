@@ -11,9 +11,9 @@
     <Menu>
         <!--mnu:File-->
         <MenuItem Header="_File">
-            <MenuItem Command="{Binding AddPackCommand}"
-                      Header="_New Question Pack"
+            <MenuItem Header="_New Question Pack"
                       Icon="{fa:Icon FolderPlus}"/>
+            <!--Command="{Binding AddPackCommand}"-->
    
             
             <MenuItem Header="_Select Question Pack"
@@ -23,10 +23,11 @@
                 <MenuItem Header="_Default Question Pack (Medium)"/>
             </MenuItem>
 
-            <MenuItem Command="{Binding RemovePackCommand}"
-                      Header="_Delete Question Pack"
-                      IsEnabled="{Binding RemovePackIsEnable}"
+            <MenuItem Header="_Delete Question Pack"                     
                       Icon="{fa:Icon FolderMinus}"/>
+             <!--Command="{Binding RemovePackCommand}"
+             IsEnabled="{Binding RemovePackIsEnable}"-->
+
             <Separator/>
 
             <MenuItem Header="_Import Questions"

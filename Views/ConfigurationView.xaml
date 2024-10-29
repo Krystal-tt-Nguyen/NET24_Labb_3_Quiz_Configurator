@@ -29,7 +29,8 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!--Ska label vara hårdkodad?-->
+            <!--Uppdateras INTE-->
+            <!--Content="{Binding ActivePack.Name, UpdateSourceTrigger=PropertyChanged}"-->
             <Label Content="Default Question Pack"
                    FontWeight="Bold" 
                    Grid.Column="0" 

@@ -56,6 +56,7 @@ namespace Laboration_3.ViewModel
         public void AddQuestion(object? obj)
         { 
             ActivePack?.Questions.Add(new Question(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty));
+            SelectedQuestion = (ActivePack?.Questions.Count > 0) ? ActivePack?.Questions.Last() : ActivePack?.Questions.FirstOrDefault();
             RemoveQuestionCommand.RaiseCanExecuteChanged();
         }
         public void RemoveQuestion(object? obj)
