@@ -11,23 +11,28 @@
     <Menu>
         <!--mnu:File-->
         <MenuItem Header="_File">
-            <MenuItem Header="_New Question Pack"
+            <MenuItem Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.AddPackCommand}"
+                      Header="_New Question Pack"
                       Icon="{fa:Icon FolderPlus}"/>
-            <!--Command="{Binding AddPackCommand}"-->
-   
-            
+
             <MenuItem Header="_Select Question Pack"
-                      Icon="{fa:Icon FolderOpen}"
-                      ItemsSource="{Binding Packs}">
-                <!--<MenuItem Header="Default Question Pack (Medium)"/>-->
-                <MenuItem Header="_Default Question Pack (Medium)"/>
+                      Icon="{fa:Icon FolderOpen}">
+                <MenuItem.ItemsSource>
+                    <Binding Path="Packs"/>
+                </MenuItem.ItemsSource>
+                <MenuItem.ItemContainerStyle>
+                    <Style TargetType="MenuItem">
+                        <Setter Property="Header" Value="{Binding Name}" />
+                        <Setter Property="Command" Value="{Binding DataContext.SelectActivePackCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <Setter Property="CommandParameter" Value="{Binding}" />
+                    </Style>
+                </MenuItem.ItemContainerStyle>
             </MenuItem>
 
-            <MenuItem Header="_Delete Question Pack"                     
-                      Icon="{fa:Icon FolderMinus}"/>
-             <!--Command="{Binding RemovePackCommand}"
-             IsEnabled="{Binding RemovePackIsEnable}"-->
-
+            <MenuItem Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.RemovePackCommand}"
+                      Header="_Delete Question Pack"                     
+                      Icon="{fa:Icon FolderMinus}"
+                      IsEnabled="{Binding RemovePackIsEnable}"/>
             <Separator/>
 
             <MenuItem Header="_Import Questions"
@@ -77,3 +82,25 @@
     </Menu>
 
 </UserControl>
+
+    
+<!--<MenuItem Header="_Select Question Pack"
+          Icon="{fa:Icon FolderOpen}">
+    --><!--ItemsSource="{Binding Packs}"--><!--
+    <MenuItem Header="_Default Question Pack (Medium)"/>
+</MenuItem>-->
+
+<!--<MenuItem 
+    Header="_Select Question Pack"
+    Icon="{fa:Icon FolderOpen}">
+    <MenuItem.ItemsSource>
+        <Binding Path="Packs"/>
+    </MenuItem.ItemsSource>
+    <MenuItem.ItemContainerStyle>
+        <Style TargetType="MenuItem">
+            <Setter Property="Header" Value="{Binding Name}" />
+            <Setter Property="Command" Value="{Binding DataContext.SetActivePackCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+            <Setter Property="CommandParameter" Value="{Binding}" />
+        </Style>
+    </MenuItem.ItemContainerStyle>
+</MenuItem>-->

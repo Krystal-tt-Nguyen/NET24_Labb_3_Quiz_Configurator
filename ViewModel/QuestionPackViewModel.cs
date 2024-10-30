@@ -8,8 +8,9 @@ namespace Laboration_3.ViewModel
         private readonly QuestionPack model;
 
         public string Name 
-        { get => model.Name;
-          set
+        { 
+            get => model.Name;
+            set
             {
                 model.Name = value;
                 RaisePropertyChanged();
@@ -43,7 +44,5 @@ namespace Laboration_3.ViewModel
             this.model = model;
             this.Questions = new ObservableCollection<Question>(model.Questions);
         }
-
-
     }
 }

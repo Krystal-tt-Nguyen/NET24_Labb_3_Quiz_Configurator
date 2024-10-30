@@ -1,8 +1,8 @@
 ﻿using Laboration_3.Command;
+using Laboration_3.Dialogs;
 using Laboration_3.Model;
 using Laboration_3.Views;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 namespace Laboration_3.ViewModel
 {
@@ -24,7 +24,18 @@ namespace Laboration_3.ViewModel
 			}
 		}
 
-		private object? _currentView;
+        private QuestionPackViewModel? _selectedPack;
+        public QuestionPackViewModel? SelectedPack
+        {
+            get => _selectedPack;
+            set
+            {
+                _selectedPack = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private object? _currentView;
 		public object? CurrentView
 		{
 			get => _currentView; 
@@ -52,6 +63,7 @@ namespace Laboration_3.ViewModel
 
         public DelegateCommand AddPackCommand { get; }
         public DelegateCommand RemovePackCommand { get; }
+        public DelegateCommand SelectActivePackCommand { get; }
         public DelegateCommand SwitchToPlayerViewCommand { get; }
 
 
@@ -59,7 +71,10 @@ namespace Laboration_3.ViewModel
         {
             RemovePackIsEnable = false;
 
+            Packs = new ObservableCollection<QuestionPackViewModel>();
 			ActivePack = new QuestionPackViewModel(new QuestionPack("Default Question Pack"));
+            Packs.Add(ActivePack);
+            ActivePack = Packs?.FirstOrDefault();
 
             CurrentView = new ConfigurationView();
             ConfigurationViewModel = new ConfigurationViewModel(this);
@@ -67,28 +82,52 @@ namespace Laboration_3.ViewModel
 
             AddPackCommand = new DelegateCommand(AddPack);
             RemovePackCommand = new DelegateCommand(RemovePack, IsRemovePackEnable);
+            SelectActivePackCommand = new DelegateCommand(SelectActivePack);
             SwitchToPlayerViewCommand = new DelegateCommand(SwitchToPlayerView);
         }
 
         private void AddPack(object? obj)
         {
+            // Dela upp metode, finns två knappar -> Create = Add, Cancel = Close + enbart öppna dialogfönstret
+            var createNewPackDialog = new CreateNewPackDialog();
+            createNewPackDialog.DataContext = this;
+            createNewPackDialog.Owner = System.Windows.Application.Current.MainWindow;
+            createNewPackDialog.ShowDialog(); 
+            
             Packs.Add(new QuestionPackViewModel(new QuestionPack()));
             RemovePackCommand.RaiseCanExecuteChanged();
         }
+
         private void RemovePack(object? obj)
         {
-            Packs.Remove(ActivePack);
-            RemovePackCommand.RaiseCanExecuteChanged();
+            // Funkar EJ
+            //Packs.Remove(ActivePack);
+            //RemovePackCommand.RaiseCanExecuteChanged();
         }
-        private bool IsRemovePackEnable(object? obj) => Packs.Count > 0 ? true : false;
+        
+        private bool IsRemovePackEnable(object? obj) => Packs != null && Packs.Count > 0 ? true : false;
+
+        private void SelectActivePack(object? obj) => ActivePack = SelectedPack;
 
         public void SwitchToPlayerView(object? obj) => CurrentView = new PlayerView();
+
+        //public void ExitGame(object? obj) => Close(); !!!!!!!!
 
     }
 
 
 }
 
+//private QuestionPackViewModel? _newPack;
+//public QuestionPackViewModel? NewPack
+//{
+//    get => _newPack;
+//    set
+//    {
+//        _newPack = value;
+//        RaisePropertyChanged();
+//    }
+//}
 
 //public  DelegateCommand SwitchToResultViewCommand { get; }
 //SwitchToResultViewCommand = new DelegateCommand(c => SwitchToResultView());

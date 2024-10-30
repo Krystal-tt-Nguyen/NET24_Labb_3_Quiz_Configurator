@@ -25,9 +25,9 @@
 
 </Window>
 
-<!--<views:ConfigurationView Grid.Row="2"/>-->
-<!--<views:PlayerView Grid.Row="2"/>-->
-<!--<views:ResultView Grid.Row="2"/>-->
+<!--<views:ConfigurationView Grid.Row="1/>-->
+<!--<views:PlayerView Grid.Row="1"/>-->
+<!--<views:ResultView Grid.Row="1"/>-->
 
 <!--<Window.InputBindings>
         <KeyBinding Key="U" Modifiers="Ctrl" Command="{Binding PlayerViewModel.UpdateButtonCommand}" />

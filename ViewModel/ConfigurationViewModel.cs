@@ -1,9 +1,7 @@
 ﻿using Laboration_3.Command;
-using Laboration_3.Model;
 using Laboration_3.Dialogs;
-using Laboration_3.ViewModel;
+using Laboration_3.Model;
 using System.Windows;
-using System.Windows.Input;
 
 namespace Laboration_3.ViewModel
 {
@@ -49,7 +47,7 @@ namespace Laboration_3.ViewModel
             SelectedQuestion = ActivePack?.Questions.FirstOrDefault();
             
             AddQuestionCommand = new DelegateCommand(AddQuestion); 
-            RemoveQuestionCommand = new DelegateCommand(RemoveQuestion, IsButtonEnable);
+            RemoveQuestionCommand = new DelegateCommand(RemoveQuestion, IsRemoveQuestionEnable);
             EditPackOptionsCommand = new DelegateCommand(EditPackOptions);
         }
 
@@ -64,17 +62,17 @@ namespace Laboration_3.ViewModel
             ActivePack?.Questions.Remove(SelectedQuestion);
             RemoveQuestionCommand.RaiseCanExecuteChanged();
         }
-        public bool IsButtonEnable(object? obj) => RemoveQuestionIsEnable = (ActivePack?.Questions.Count > 0) ? true : false;
+        public bool IsRemoveQuestionEnable(object? obj) => RemoveQuestionIsEnable = ActivePack != null && ActivePack?.Questions.Count > 0 ? true : false;
+
         public void EditPackOptions(object? obj)
         {
             var packOptionsDialog = new PackOptionsDialog();
+            packOptionsDialog.DataContext = this;
             packOptionsDialog.Owner = Application.Current.MainWindow;
-            packOptionsDialog.Show();
+            packOptionsDialog.ShowDialog();
         }
 
     }
 }
 
-//Focus
-//SelectedQuestion = (ActivePack?.Questions.Count > 0) ? ActivePack.Questions.First() : null;
 
