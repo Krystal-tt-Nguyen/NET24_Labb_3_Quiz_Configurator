@@ -66,9 +66,9 @@
 
                 <Button Background="Transparent" 
                         BorderBrush="Transparent"
-                        Command="{Binding RemoveQuestionCommand}"
+                        Command="{Binding DeleteQuestionCommand}"
                         Height="20" 
-                        IsEnabled="{Binding RemoveQuestionIsEnable}"
+                        IsEnabled="{Binding DeleteQuestionIsEnable, UpdateSourceTrigger=PropertyChanged}"
                         Margin="3 3 10 3"
                         Visibility="Visible"
                         Width="20">

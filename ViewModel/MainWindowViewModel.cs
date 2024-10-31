@@ -2,6 +2,7 @@
 using Laboration_3.Dialogs;
 using Laboration_3.Model;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace Laboration_3.ViewModel
 {
@@ -22,7 +23,7 @@ namespace Laboration_3.ViewModel
 				_activePack = value;
 				RaisePropertyChanged();
                 ConfigurationViewModel?.RaisePropertyChanged();
-			}
+            }
 		}
 
         private QuestionPackViewModel? _newPack;
@@ -47,28 +48,28 @@ namespace Laboration_3.ViewModel
             }
         }
 
-        private bool _removePackIsEnable;
-        public bool RemovePackIsEnable
+        private bool _deletePackIsEnable;
+        public bool DeletePackIsEnable
         {
-            get => _removePackIsEnable;
+            get => _deletePackIsEnable;
             set
             {
-                _removePackIsEnable = value;
+                _deletePackIsEnable = value;
                 RaisePropertyChanged();
             }
         }
 
 
-        public DelegateCommand CreateNewPackCommand { get; }
         public DelegateCommand ClosePackDialogCommand { get; }
+        public DelegateCommand CreateNewPackCommand { get; }
         public DelegateCommand OpenPackDialogCommand { get; }
-        public DelegateCommand RemovePackCommand { get; }
+        public DelegateCommand DeletePackCommand { get; }
         public DelegateCommand SelectActivePackCommand { get; }
 
 
         public MainWindowViewModel()
         {
-            RemovePackIsEnable = false;
+            DeletePackIsEnable = true;
 
             Packs = new ObservableCollection<QuestionPackViewModel>();
 			ActivePack = new QuestionPackViewModel(new QuestionPack("Default Question Pack"));
@@ -78,10 +79,10 @@ namespace Laboration_3.ViewModel
             ConfigurationViewModel = new ConfigurationViewModel(this);
 			PlayerViewModel = new PlayerViewModel(this);
 
-            OpenPackDialogCommand = new DelegateCommand(OpenNewPackDialog);
-            CreateNewPackCommand = new DelegateCommand(CreateNewPack);
             ClosePackDialogCommand = new DelegateCommand(ClosePackDialog);
-            RemovePackCommand = new DelegateCommand(RemovePack, IsRemovePackEnable);
+            CreateNewPackCommand = new DelegateCommand(CreateNewPack);
+            OpenPackDialogCommand = new DelegateCommand(OpenNewPackDialog);
+            DeletePackCommand = new DelegateCommand(DeletePack, IsDeletePackEnable);
             SelectActivePackCommand = new DelegateCommand(SelectActivePack);              
         }
 
@@ -93,61 +94,52 @@ namespace Laboration_3.ViewModel
             PackDialog.Owner = System.Windows.Application.Current.MainWindow;
             PackDialog.ShowDialog(); 
         }
+
         private void CreateNewPack(object? obj)
         {
             if (NewPack != null)
             {
                 Packs.Add(NewPack);
                 ActivePack = NewPack;
-                RemovePackCommand.RaiseCanExecuteChanged();
+                DeletePackCommand.RaiseCanExecuteChanged();
             }
             PackDialog.Close();
         }
 
         private void ClosePackDialog(object? obj) => PackDialog.Close();
 
-        private void RemovePack(object? obj)
+        private void DeletePack(object? obj)
         {
-            Packs.Remove(ActivePack);
-            RemovePackCommand.RaiseCanExecuteChanged();
+            MessageBoxResult result = MessageBox.Show($"Are you sure you want to delete \"{ActivePack.Name}\"?", 
+                "Delete Question Pack?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                Packs.Remove(ActivePack);
+                DeletePackCommand.RaiseCanExecuteChanged();
+            }
+            
+            if (Packs.Count > 0)
+            {
+                ActivePack = Packs.FirstOrDefault();
+            }
         }
         
-        private bool IsRemovePackEnable(object? obj) => Packs != null && Packs.Count > 0 ? true : false;
+        private bool IsDeletePackEnable(object? obj) => Packs != null && Packs.Count > 1 ? true : false;
 
         private void SelectActivePack(object? obj)
         {
             if (obj is QuestionPackViewModel selectedPack)
             {
                 SelectedPack = selectedPack; 
-                ActivePack = SelectedPack; 
+                ActivePack = SelectedPack;
             }
         }
 
-        //public void ExitGame(object? obj) => Close(); !!!!!!!!
+        // public void ExitGame(object? obj) => Close(); !!!!!!!!
+        //Application.Current.Shutdown();??
 
     }
 
 
 }
-
-
-
-
-//private object? _currentView;
-//public object? CurrentView
-//{
-//    get => _currentView;
-//    set
-//    {
-//        if (_currentView != value)
-//        {
-//            _currentView = value;
-//            RaisePropertyChanged();
-//        }
-//    }
-//}
-//CurrentView = new ConfigurationView();
-//public DelegateCommand SwitchToPlayerViewCommand { get; }
-//public void SwitchToPlayerView(object? obj) => CurrentView = new PlayerView();
-//SwitchToPlayerViewCommand = new DelegateCommand(SwitchToPlayerView);
-

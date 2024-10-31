@@ -29,10 +29,10 @@
                 </MenuItem.ItemContainerStyle>
             </MenuItem>
 
-            <MenuItem Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.RemovePackCommand}"
+            <MenuItem Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.DeletePackCommand}"
                       Header="_Delete Question Pack"                     
                       Icon="{fa:Icon FolderMinus}"
-                      IsEnabled="{Binding RemovePackIsEnable}"/>
+                      IsEnabled="{Binding DeletePackIsEnable, UpdateSourceTrigger=PropertyChanged}"/>
             <Separator/>
 
             <MenuItem Header="_Import Questions"
@@ -52,7 +52,7 @@
                       Icon="{fa:Icon Plus}"
                       InputGestureText="Insert"/>
 
-            <MenuItem Command="{Binding ConfigurationViewModel.RemoveQuestionCommand}"
+            <MenuItem Command="{Binding ConfigurationViewModel.DeleteQuestionCommand}"
                       Header="_Remove Questions"
                       Icon="{fa:Icon Minus}"
                       InputGestureText="Delete"/>
