@@ -30,6 +30,18 @@ namespace Laboration_3.ViewModel
             {
                 _selectedQuestion = value;
                 RaisePropertyChanged();
+                ChangeTextVisibility();
+            }
+        }
+
+        private Visibility _textVisibility;
+        public Visibility TextVisibility
+        {
+            get => _textVisibility;
+            set 
+            { 
+                _textVisibility = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -42,29 +54,35 @@ namespace Laboration_3.ViewModel
         public ConfigurationViewModel(MainWindowViewModel? mainWindowViewModel)
         {
             this.mainWindowViewModel = mainWindowViewModel;
+            
             RemoveQuestionIsEnable = false;
-
             SelectedQuestion = ActivePack?.Questions.FirstOrDefault();
+            TextVisibility = ActivePack?.Questions.Count > 0 ? Visibility.Visible : Visibility.Hidden;
             
             AddQuestionCommand = new DelegateCommand(AddQuestion); 
             RemoveQuestionCommand = new DelegateCommand(RemoveQuestion, IsRemoveQuestionEnable);
             EditPackOptionsCommand = new DelegateCommand(EditPackOptions);
         }
 
-        public void AddQuestion(object? obj)
+        private void AddQuestion(object? obj)
         { 
             ActivePack?.Questions.Add(new Question(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty));
             SelectedQuestion = (ActivePack?.Questions.Count > 0) ? ActivePack?.Questions.Last() : ActivePack?.Questions.FirstOrDefault();
             RemoveQuestionCommand.RaiseCanExecuteChanged();
+            ChangeTextVisibility();
+
         }
-        public void RemoveQuestion(object? obj)
+        private void RemoveQuestion(object? obj)
         { 
             ActivePack?.Questions.Remove(SelectedQuestion);
             RemoveQuestionCommand.RaiseCanExecuteChanged();
+            ChangeTextVisibility();
         }
-        public bool IsRemoveQuestionEnable(object? obj) => RemoveQuestionIsEnable = ActivePack != null && ActivePack?.Questions.Count > 0 ? true : false;
 
-        public void EditPackOptions(object? obj)
+        private bool IsRemoveQuestionEnable(object? obj) 
+            => RemoveQuestionIsEnable = ActivePack != null && ActivePack?.Questions.Count > 0 ? true : false;
+
+        private void EditPackOptions(object? obj)
         {
             var packOptionsDialog = new PackOptionsDialog();
             packOptionsDialog.DataContext = this;
@@ -72,6 +90,8 @@ namespace Laboration_3.ViewModel
             packOptionsDialog.ShowDialog();
         }
 
+        private void ChangeTextVisibility() 
+            => TextVisibility = ActivePack?.Questions.Count > 0 && SelectedQuestion != null ? Visibility.Visible : Visibility.Hidden;
     }
 }
 

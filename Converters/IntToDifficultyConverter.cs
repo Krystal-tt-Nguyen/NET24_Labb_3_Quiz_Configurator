@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace Laboration_3.Converters
 {
-    internal class DifficultyConverter : IValueConverter
+    internal class IntToDifficultyConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

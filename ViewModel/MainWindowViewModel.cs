@@ -1,7 +1,6 @@
 ﻿using Laboration_3.Command;
 using Laboration_3.Dialogs;
 using Laboration_3.Model;
-using Laboration_3.Views;
 using System.Collections.ObjectModel;
 
 namespace Laboration_3.ViewModel
@@ -11,6 +10,7 @@ namespace Laboration_3.ViewModel
         public ObservableCollection<QuestionPackViewModel> Packs { get; set; }
         public ConfigurationViewModel ConfigurationViewModel { get; }
         public PlayerViewModel PlayerViewModel { get; }
+        public CreateNewPackDialog PackDialog { get; set; }
 
 
         private QuestionPackViewModel? _activePack;
@@ -21,8 +21,20 @@ namespace Laboration_3.ViewModel
 			{ 
 				_activePack = value;
 				RaisePropertyChanged();
+                ConfigurationViewModel?.RaisePropertyChanged();
 			}
 		}
+
+        private QuestionPackViewModel? _newPack;
+        public QuestionPackViewModel? NewPack
+        {
+            get => _newPack;
+            set
+            {
+                _newPack = value;
+                RaisePropertyChanged();
+            }
+        }
 
         private QuestionPackViewModel? _selectedPack;
         public QuestionPackViewModel? SelectedPack
@@ -34,20 +46,6 @@ namespace Laboration_3.ViewModel
                 RaisePropertyChanged();
             }
         }
-
-        private object? _currentView;
-		public object? CurrentView
-		{
-			get => _currentView; 
-			set 
-			{ 
-				if (_currentView != value)
-				{
-					_currentView = value;
-					RaisePropertyChanged();
-				}
-			}
-		}
 
         private bool _removePackIsEnable;
         public bool RemovePackIsEnable
@@ -61,10 +59,11 @@ namespace Laboration_3.ViewModel
         }
 
 
-        public DelegateCommand AddPackCommand { get; }
+        public DelegateCommand CreateNewPackCommand { get; }
+        public DelegateCommand ClosePackDialogCommand { get; }
+        public DelegateCommand OpenPackDialogCommand { get; }
         public DelegateCommand RemovePackCommand { get; }
         public DelegateCommand SelectActivePackCommand { get; }
-        public DelegateCommand SwitchToPlayerViewCommand { get; }
 
 
         public MainWindowViewModel()
@@ -76,40 +75,53 @@ namespace Laboration_3.ViewModel
             Packs.Add(ActivePack);
             ActivePack = Packs?.FirstOrDefault();
 
-            CurrentView = new ConfigurationView();
             ConfigurationViewModel = new ConfigurationViewModel(this);
 			PlayerViewModel = new PlayerViewModel(this);
 
-            AddPackCommand = new DelegateCommand(AddPack);
+            OpenPackDialogCommand = new DelegateCommand(OpenNewPackDialog);
+            CreateNewPackCommand = new DelegateCommand(CreateNewPack);
+            ClosePackDialogCommand = new DelegateCommand(ClosePackDialog);
             RemovePackCommand = new DelegateCommand(RemovePack, IsRemovePackEnable);
-            SelectActivePackCommand = new DelegateCommand(SelectActivePack);
-            SwitchToPlayerViewCommand = new DelegateCommand(SwitchToPlayerView);
+            SelectActivePackCommand = new DelegateCommand(SelectActivePack);              
         }
 
-        private void AddPack(object? obj)
+        private void OpenNewPackDialog(object? obj)
         {
-            // Dela upp metode, finns två knappar -> Create = Add, Cancel = Close + enbart öppna dialogfönstret
-            var createNewPackDialog = new CreateNewPackDialog();
-            createNewPackDialog.DataContext = this;
-            createNewPackDialog.Owner = System.Windows.Application.Current.MainWindow;
-            createNewPackDialog.ShowDialog(); 
-            
-            Packs.Add(new QuestionPackViewModel(new QuestionPack()));
-            RemovePackCommand.RaiseCanExecuteChanged();
+            NewPack = new QuestionPackViewModel(new QuestionPack());
+            PackDialog = new CreateNewPackDialog();
+            PackDialog.DataContext = this;
+            PackDialog.Owner = System.Windows.Application.Current.MainWindow;
+            PackDialog.ShowDialog(); 
         }
+        private void CreateNewPack(object? obj)
+        {
+            if (NewPack != null)
+            {
+                Packs.Add(NewPack);
+                ActivePack = NewPack;
+                RemovePackCommand.RaiseCanExecuteChanged();
+            }
+            PackDialog.Close();
+        }
+
+        private void ClosePackDialog(object? obj) => PackDialog.Close();
 
         private void RemovePack(object? obj)
         {
-            // Funkar EJ
-            //Packs.Remove(ActivePack);
-            //RemovePackCommand.RaiseCanExecuteChanged();
+            Packs.Remove(ActivePack);
+            RemovePackCommand.RaiseCanExecuteChanged();
         }
         
         private bool IsRemovePackEnable(object? obj) => Packs != null && Packs.Count > 0 ? true : false;
 
-        private void SelectActivePack(object? obj) => ActivePack = SelectedPack;
-
-        public void SwitchToPlayerView(object? obj) => CurrentView = new PlayerView();
+        private void SelectActivePack(object? obj)
+        {
+            if (obj is QuestionPackViewModel selectedPack)
+            {
+                SelectedPack = selectedPack; 
+                ActivePack = SelectedPack; 
+            }
+        }
 
         //public void ExitGame(object? obj) => Close(); !!!!!!!!
 
@@ -118,17 +130,24 @@ namespace Laboration_3.ViewModel
 
 }
 
-//private QuestionPackViewModel? _newPack;
-//public QuestionPackViewModel? NewPack
+
+
+
+//private object? _currentView;
+//public object? CurrentView
 //{
-//    get => _newPack;
+//    get => _currentView;
 //    set
 //    {
-//        _newPack = value;
-//        RaisePropertyChanged();
+//        if (_currentView != value)
+//        {
+//            _currentView = value;
+//            RaisePropertyChanged();
+//        }
 //    }
 //}
+//CurrentView = new ConfigurationView();
+//public DelegateCommand SwitchToPlayerViewCommand { get; }
+//public void SwitchToPlayerView(object? obj) => CurrentView = new PlayerView();
+//SwitchToPlayerViewCommand = new DelegateCommand(SwitchToPlayerView);
 
-//public  DelegateCommand SwitchToResultViewCommand { get; }
-//SwitchToResultViewCommand = new DelegateCommand(c => SwitchToResultView());
-//public void SwitchToResultView() => CurrentView = new ResultView();

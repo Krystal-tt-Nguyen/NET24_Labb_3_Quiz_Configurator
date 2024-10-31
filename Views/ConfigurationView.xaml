@@ -29,7 +29,6 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!--Uppdateras INTE-->
             <Label Content="{Binding ActivePack.Name}"
                    FontWeight="Bold" 
                    Grid.Column="0" 
@@ -45,7 +44,7 @@
 
                 <Button Background="Transparent" 
                         BorderBrush="Transparent"
-                        Command ="{Binding EditPackOptionsCommand, UpdateSourceTrigger=PropertyChanged}"
+                        Command ="{Binding EditPackOptionsCommand}"
                         Height="20" 
                         Margin="3"
                         Width="20">
@@ -56,7 +55,7 @@
 
                 <Button Background="Transparent" 
                         BorderBrush="Transparent"
-                        Command="{Binding AddQuestionCommand, UpdateSourceTrigger=PropertyChanged}"
+                        Command="{Binding AddQuestionCommand}"
                         Height="20" 
                         Margin="3"
                         Width="20">
@@ -67,7 +66,7 @@
 
                 <Button Background="Transparent" 
                         BorderBrush="Transparent"
-                        Command="{Binding RemoveQuestionCommand, UpdateSourceTrigger=PropertyChanged}"
+                        Command="{Binding RemoveQuestionCommand}"
                         Height="20" 
                         IsEnabled="{Binding RemoveQuestionIsEnable}"
                         Margin="3 3 10 3"
@@ -86,7 +85,7 @@
                  Grid.RowSpan="2" 
                  ItemsSource="{Binding ActivePack.Questions}" 
                  Margin="10 0 10 10"
-                 SelectedItem="{Binding SelectedQuestion}">
+                 SelectedItem="{Binding SelectedQuestion, UpdateSourceTrigger=PropertyChanged}">
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -111,21 +110,21 @@
                    Grid.Column="1" 
                    Grid.Row="0"
                    Margin="15 -10 20 0"
-                   Visibility="{Binding ElementName=spAnswers, Path=Visibility}"/>
+                   Visibility="{Binding TextVisibility}"/>
 
             <TextBox Grid.Column="1" 
                      Grid.Row="1"
                      Margin="20 0" 
                      Padding="5"
                      Text ="{Binding SelectedQuestion.Query, UpdateSourceTrigger=PropertyChanged}" 
-                     Visibility="{Binding ElementName=spAnswers, Path=Visibility}"/>
+                     Visibility="{Binding TextVisibility}"/>
         </Grid>
 
         <StackPanel x:Name="spAnswers"
                     Grid.Column="1" 
                     Grid.Row="2" 
                     Margin="20 0"
-                    Visibility="Visible">
+                    Visibility="{Binding TextVisibility}">
 
             <Label Content="Correct Answer" 
                    FontWeight="Bold" 

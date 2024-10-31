@@ -11,7 +11,7 @@
     <Menu>
         <!--mnu:File-->
         <MenuItem Header="_File">
-            <MenuItem Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.AddPackCommand}"
+            <MenuItem Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.OpenPackDialogCommand}"
                       Header="_New Question Pack"
                       Icon="{fa:Icon FolderPlus}"/>
 
@@ -63,10 +63,10 @@
                       InputGestureText="Ctrl+O"/>
         </MenuItem>
 
+        <!--TODO: FIXA BYTE AV VY-->
         <!--mnu:View-->
         <MenuItem Header="_View">
-            <MenuItem Command="{Binding SwitchToPlayerViewCommand}"
-                      Header="_Play"
+            <MenuItem Header="_Play"
                       Icon="{fa:Icon Play}"
                       InputGestureText="Ctrl+P"/>
 
@@ -82,25 +82,3 @@
     </Menu>
 
 </UserControl>
-
-    
-<!--<MenuItem Header="_Select Question Pack"
-          Icon="{fa:Icon FolderOpen}">
-    --><!--ItemsSource="{Binding Packs}"--><!--
-    <MenuItem Header="_Default Question Pack (Medium)"/>
-</MenuItem>-->
-
-<!--<MenuItem 
-    Header="_Select Question Pack"
-    Icon="{fa:Icon FolderOpen}">
-    <MenuItem.ItemsSource>
-        <Binding Path="Packs"/>
-    </MenuItem.ItemsSource>
-    <MenuItem.ItemContainerStyle>
-        <Style TargetType="MenuItem">
-            <Setter Property="Header" Value="{Binding Name}" />
-            <Setter Property="Command" Value="{Binding DataContext.SetActivePackCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
-            <Setter Property="CommandParameter" Value="{Binding}" />
-        </Style>
-    </MenuItem.ItemContainerStyle>
-</MenuItem>-->

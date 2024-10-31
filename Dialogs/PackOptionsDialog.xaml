@@ -13,7 +13,7 @@
         WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
-        <converters:DifficultyConverter x:Key="DifficultyConverter"/>
+        <converters:IntToDifficultyConverter x:Key="DifficultyConverter"/>
     </Window.Resources>
 
     <Grid>
@@ -27,7 +27,6 @@
                 FontWeight="Bold"
                 Grid.Row="0" 
                 Margin="5 5 0 5"/>
-        <!--Uppdateras INTE-->
         <TextBox Grid.Row="0"
                  Height="20" 
                  Margin="10 15 10 0"
@@ -67,7 +66,7 @@
                 IsSnapToTickEnabled="True"
                 TickFrequency="5" 
                 TickPlacement="BottomRight"
-                Value="{Binding ActivePack.TimeLimitInSeconds}"/>
+                Value="{Binding ActivePack.TimeLimitInSeconds, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
     
 </Window>

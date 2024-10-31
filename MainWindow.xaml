@@ -19,16 +19,15 @@
         </Grid.RowDefinitions>
 
         <views:MenuView Grid.Row="0"/>
-        <ContentControl Content="{Binding CurrentView}" Grid.Row="1"/>
+        <views:ConfigurationView Grid.Row="1"/>
+        <!--<views:PlayerView Grid.Row="1"/>-->
+        <!--<views:ResultView Grid.Row="1"/>-->
 
     </Grid>
 
 </Window>
 
-<!--<views:ConfigurationView Grid.Row="1/>-->
-<!--<views:PlayerView Grid.Row="1"/>-->
-<!--<views:ResultView Grid.Row="1"/>-->
 
-<!--<Window.InputBindings>
+    <!--<Window.InputBindings>
         <KeyBinding Key="U" Modifiers="Ctrl" Command="{Binding PlayerViewModel.UpdateButtonCommand}" />
-    </Window.InputBindings>-->
+</Window.InputBindings>-->
