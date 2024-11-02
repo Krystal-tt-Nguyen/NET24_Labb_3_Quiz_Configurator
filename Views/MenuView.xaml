@@ -63,14 +63,15 @@
                       InputGestureText="Ctrl+O"/>
         </MenuItem>
 
-        <!--TODO: FIXA BYTE AV VY-->
         <!--mnu:View-->
         <MenuItem Header="_View">
-            <MenuItem Header="_Play"
+            <MenuItem Command="{Binding PlayerViewModel.SwitchToPlayModeCommand}"
+                      Header="_Play"
                       Icon="{fa:Icon Play}"
                       InputGestureText="Ctrl+P"/>
 
-            <MenuItem Header="_Edit"
+            <MenuItem Command="{Binding ConfigurationViewModel.SwitchToConfigurationModeCommand}"
+                      Header="_Edit"
                       Icon="{fa:Icon Gears}"
                       InputGestureText="Ctrl+E"/>
             <Separator/>

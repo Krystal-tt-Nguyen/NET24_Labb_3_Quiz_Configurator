@@ -14,6 +14,18 @@ namespace Laboration_3.ViewModel
         public CreateNewPackDialog PackDialog { get; set; }
 
 
+        private bool _deletePackIsEnable;
+        public bool DeletePackIsEnable
+        {
+            get => _deletePackIsEnable;
+            set
+            {
+                _deletePackIsEnable = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
         private QuestionPackViewModel? _activePack;
 		public QuestionPackViewModel? ActivePack
 		{
@@ -48,17 +60,8 @@ namespace Laboration_3.ViewModel
             }
         }
 
-        private bool _deletePackIsEnable;
-        public bool DeletePackIsEnable
-        {
-            get => _deletePackIsEnable;
-            set
-            {
-                _deletePackIsEnable = value;
-                RaisePropertyChanged();
-            }
-        }
 
+        //public event EventHandler OpenDialogOnRequest; // FÖLJER INTE MVVM? - Bryt ut dialog till event
 
         public DelegateCommand ClosePackDialogCommand { get; }
         public DelegateCommand CreateNewPackCommand { get; }
@@ -92,7 +95,9 @@ namespace Laboration_3.ViewModel
             PackDialog = new CreateNewPackDialog();
             PackDialog.DataContext = this;
             PackDialog.Owner = System.Windows.Application.Current.MainWindow;
-            PackDialog.ShowDialog(); 
+            PackDialog.ShowDialog();
+
+            //OpenDialogOnRequest?.Invoke(this, EventArgs.Empty);
         }
 
         private void CreateNewPack(object? obj)
@@ -103,6 +108,7 @@ namespace Laboration_3.ViewModel
                 ActivePack = NewPack;
                 DeletePackCommand.RaiseCanExecuteChanged();
             }
+
             PackDialog.Close();
         }
 
@@ -136,10 +142,14 @@ namespace Laboration_3.ViewModel
             }
         }
 
-        // public void ExitGame(object? obj) => Close(); !!!!!!!!
-        //Application.Current.Shutdown();??
+
+        // public void ExitGame(object? obj) => Close(); HUR AVSLUTA PROGRAMMET?!!!!!!!!
+        // Application.Current.Shutdown();??
 
     }
-
-
 }
+
+
+//public event EventHandler OpenPackDialog;
+//OpenPackDialog?.Invoke(this, EventArgs.Empty);
+        

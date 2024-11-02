@@ -12,17 +12,21 @@
         MinHeight="450" MinWidth="700" 
         Title="Quiz Configurator">
 
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
+    </Window.Resources>
+
     <Grid Background="MintCream">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+       
         <views:MenuView Grid.Row="0"/>
-        <views:ConfigurationView Grid.Row="1"/>
-        <!--<views:PlayerView Grid.Row="1"/>-->
-        <!--<views:ResultView Grid.Row="1"/>-->
-
+        <views:ConfigurationView Grid.Row="1" Visibility="{Binding IsConfigurationModeVisible, Converter={StaticResource VisibilityConverter}}"/>
+        <views:PlayerView Grid.Row="1" Visibility="{Binding IsPlayerModeVisible, Converter={StaticResource VisibilityConverter}}"/>
+        <views:ResultView Grid.Row="1" Visibility="{Binding IsResultModeVisible, Converter={StaticResource VisibilityConverter}}"/>
     </Grid>
 
 </Window>
