@@ -90,6 +90,7 @@ namespace Laboration_3.ViewModel
 
             UpdateCommandStates();
             ChangeTextVisibility();
+            //mainWindowViewModel.WriteToJson();
         }
 
         private bool IsAddQuestionEnable(object? obj) => IsConfigurationModeVisible;
@@ -99,6 +100,7 @@ namespace Laboration_3.ViewModel
             ActivePack?.Questions.Remove(SelectedQuestion);
             UpdateCommandStates();
             ChangeTextVisibility();
+            //mainWindowViewModel.WriteToJson();
         }
 
         private bool IsDeleteQuestionEnable(object? obj) 
@@ -109,6 +111,7 @@ namespace Laboration_3.ViewModel
             var packOptionsDialog = new PackOptionsDialog() { DataContext = this };
             packOptionsDialog.Owner = Application.Current.MainWindow;
             packOptionsDialog.ShowDialog();
+            //mainWindowViewModel.WriteToJson();
         } 
 
         private bool IsEditPackOptionsEnable(object? obj) => IsConfigurationModeVisible;

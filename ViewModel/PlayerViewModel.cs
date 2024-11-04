@@ -130,8 +130,9 @@ namespace Laboration_3.ViewModel
         }
 
 
-        private Visibility[] _checkmarkVisibilities;
-        public Visibility[] CheckmarkVisibilities
+
+        private bool[] _checkmarkVisibilities;
+        public bool[] CheckmarkVisibilities
         {
             get => _checkmarkVisibilities;
             set
@@ -141,8 +142,8 @@ namespace Laboration_3.ViewModel
             }
         }
 
-        private Visibility[] _crossVisibilities;
-        public Visibility[] CrossVisibilities
+        private bool[] _crossVisibilities;
+        public bool[] CrossVisibilities
         {
             get => _crossVisibilities;
             set
@@ -151,6 +152,7 @@ namespace Laboration_3.ViewModel
                 RaisePropertyChanged();
             }
         }
+
 
 
         public DelegateCommand SwitchToPlayModeCommand { get; }
@@ -164,8 +166,8 @@ namespace Laboration_3.ViewModel
             SwitchToPlayModeCommand = new DelegateCommand(StartPlayMode, IsPlayModeEnable);
             CheckPlayerAnswerCommand = new DelegateCommand(OnSelectedAnswer);
 
-            CheckmarkVisibilities = new Visibility[4] {Visibility.Hidden, Visibility.Hidden, Visibility.Hidden, Visibility.Hidden };
-            CrossVisibilities = new Visibility[4] {Visibility.Hidden, Visibility.Hidden, Visibility.Hidden, Visibility.Hidden };
+            CheckmarkVisibilities = new bool[4] {false, false, false, false };
+            CrossVisibilities = new bool[4] { false, false, false, false };
         }
 
         private void StartPlayMode(object? obj)
@@ -189,8 +191,14 @@ namespace Laboration_3.ViewModel
             LoadNextQuestion();
         }
 
-        private bool IsPlayModeEnable(object? obj) 
-            => (PlayButtonIsEnable = !IsPlayerModeVisible /*&& !IsResultModeVisible*/) && ActivePack.Questions.Count > 0; //Restart ej aktiv då?
+        private bool IsPlayModeEnable(object? obj)
+        {
+            if (ActivePack is null)
+            {
+                return false;
+            }
+            return (PlayButtonIsEnable = !IsPlayerModeVisible) && ActivePack.Questions.Count > 0; 
+        }
        
         private void OnTimerTick(object? sender, EventArgs e)
         {
@@ -244,7 +252,7 @@ namespace Laboration_3.ViewModel
 
         private async void OnSelectedAnswer(object? obj) 
         {
-            var playerAnswer = obj as string;
+            playerAnswerIndex = int.Parse(obj as string);
 
             if (obj == null) 
             {
@@ -252,27 +260,27 @@ namespace Laboration_3.ViewModel
                 return;
             }
   
-            playerAnswerIndex = ShuffledAnswers.IndexOf(playerAnswer);
             await DisplayCorrectAnswer();
         }
 
         private async Task DisplayCorrectAnswer()
         {
             timer.Stop();
+
             if (playerAnswerIndex != -1)
             {
                 if (playerAnswerIndex == correctAnswerIndex)
                 {
                     amountcorrectAnswers++;
-                    CheckmarkVisibilities[playerAnswerIndex] = Visibility.Visible;
+                    CheckmarkVisibilities[playerAnswerIndex] = true;
                 }
                 else
                 {
-                    CrossVisibilities[playerAnswerIndex] = Visibility.Visible;
+                    CrossVisibilities[playerAnswerIndex] = true;
                 }
             }
 
-            CheckmarkVisibilities[correctAnswerIndex] = Visibility.Visible;
+            CheckmarkVisibilities[correctAnswerIndex] = true;
 
             UpdateCommandStates();
 
@@ -286,8 +294,8 @@ namespace Laboration_3.ViewModel
         {
             for (int i = 0; i < 4; i++)
             {
-                CheckmarkVisibilities[i] = Visibility.Hidden;
-                CrossVisibilities[i] = Visibility.Hidden;
+                CheckmarkVisibilities[i] = false;
+                CrossVisibilities[i] = false;
             }
 
             UpdateCommandStates();

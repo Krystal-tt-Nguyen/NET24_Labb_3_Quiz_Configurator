@@ -2,6 +2,7 @@
 using Laboration_3.Dialogs;
 using Laboration_3.Model;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Text.Json;
 using System.Windows;
 
@@ -84,7 +85,6 @@ namespace Laboration_3.ViewModel
         }
 
 
-        //public event EventHandler<bool> OpenDialogOnRequest; 
         public event EventHandler<bool> ToggleFullScreenRequested;
         public event EventHandler <bool> ExitGameRequested;
 
@@ -103,8 +103,22 @@ namespace Laboration_3.ViewModel
             IsFullscreen = false;
             CanExit = false;
 
+            //string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+       //     if (Path.Exists(path))
+       //     {
+       //         WriteToJson();
+       //     }
+       //     else
+       //     {
+       //         Packs = new ObservableCollection<QuestionPackViewModel>();
+			    //ActivePack = new QuestionPackViewModel(new QuestionPack("Default Question Pack"));
+            //         Packs.Add(ActivePack);
+            //         ActivePack = Packs?.FirstOrDefault();
+            //     }
+
             Packs = new ObservableCollection<QuestionPackViewModel>();
-			ActivePack = new QuestionPackViewModel(new QuestionPack("Default Question Pack"));
+            ActivePack = new QuestionPackViewModel(new QuestionPack("Default Question Pack"));
             Packs.Add(ActivePack);
             ActivePack = Packs?.FirstOrDefault();
 
@@ -180,20 +194,38 @@ namespace Laboration_3.ViewModel
             ToggleFullScreenRequested?.Invoke(this, _isFullscreen);
         }
        
-        public void ExitGame(object? obj)
+        public async void ExitGame(object? obj)
         {
+            //await WriteToJson();
+            
             CanExit = true;
             ExitGameRequested?.Invoke(this, CanExit);
         }
 
-        //public async Task LoadJSON()
+
+        //public async Task WriteToJson()
         //{
-        //    var jsonSerializer = new JsonSerializerOptions();
+        //    var options = new JsonSerializerOptions()
+        //    {
+        //        IncludeFields = true,
+        //        IgnoreReadOnlyProperties = false
+        //    };
+
+        //    string json = JsonSerializer.Serialize(Packs, options);
+        //    string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+        //    path = Path.Combine(path, "Laboration_3");
+        //    Directory.CreateDirectory(path);
+        //    path = Path.Combine(path, "Laboration_3.json");
+
+        //    File.WriteAllText(path, json);
+        //}
+
+        //public async Task ReadFromJson()
+        //{
+
         //}
 
     }
 }
-
-//public event EventHandler OpenPackDialog;
-//OpenPackDialog?.Invoke(this, EventArgs.Empty);
 
