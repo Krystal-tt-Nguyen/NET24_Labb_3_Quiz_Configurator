@@ -32,13 +32,18 @@
             </Grid.RowDefinitions>
 
             <Label Content="Complete!"
-                   FontSize="36" FontWeight="Bold" Grid.Row="0"
-                   HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                   FontSize="36" 
+                   FontWeight="Bold" 
+                   Grid.Row="0"
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Bottom">
             </Label>
 
             <Label Content="{Binding Results}"
-                   FontSize="24" Grid.Row="1"
-                   HorizontalAlignment="Center" VerticalAlignment="Top">
+                   FontSize="24" 
+                   Grid.Row="1"
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Top">
             </Label>
         </Grid>
 
@@ -47,17 +52,18 @@
         <Button Background="White"
                 Command="{Binding SwitchToPlayModeCommand}"
                 FontSize="20"
-                Grid.Column="1" Grid.Row="02"
-                HorizontalAlignment="Center" VerticalAlignment="Top"
+                Grid.Column="1" 
+                Grid.Row="02"
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Top"
                 Padding="20 5">
-            
+
             <Button.Content>
                 <StackPanel Orientation="Horizontal">
                     <fa:IconBlock Icon="ArrowRotateRight" Margin="10 0"/>
                     <TextBlock Text="Restart!"/>
                 </StackPanel>
             </Button.Content>
-            
         </Button>
     
     </Grid>

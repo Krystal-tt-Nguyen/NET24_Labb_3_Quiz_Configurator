@@ -193,11 +193,3 @@
     </Grid>
 
 </UserControl>
-
-
-<!--Exempel från Code_along-->
-<!--<Button VerticalAlignment="Center"
-           HorizontalAlignment="Center"
-           Content="{Binding TestData}"
-           Margin="10" 
-           Command="{Binding UpdateButtonCommand}"/>-->

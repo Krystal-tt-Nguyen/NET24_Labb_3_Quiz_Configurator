@@ -46,8 +46,8 @@ namespace Laboration_3.ViewModel
             }
         }
 
-        private Visibility _textVisibility;
-        public Visibility TextVisibility
+        private bool _textVisibility;
+        public bool TextVisibility
         {
             get => _textVisibility;
             set 
@@ -61,25 +61,23 @@ namespace Laboration_3.ViewModel
         public DelegateCommand AddQuestionCommand { get; }
         public DelegateCommand DeleteQuestionCommand { get; }
         public DelegateCommand EditPackOptionsCommand { get; }
-
         public DelegateCommand SwitchToConfigurationModeCommand { get; }
 
 
         public ConfigurationViewModel(MainWindowViewModel? mainWindowViewModel)
         {
             this.mainWindowViewModel = mainWindowViewModel;
-            
+
             DeleteQuestionIsEnable = false;
             IsConfigurationModeVisible = true;
 
             SelectedQuestion = ActivePack?.Questions.FirstOrDefault();
-            TextVisibility = ActivePack?.Questions.Count > 0 ? Visibility.Visible : Visibility.Hidden;
+            TextVisibility = ActivePack?.Questions.Count > 0;
             
             AddQuestionCommand = new DelegateCommand(AddQuestion, IsAddQuestionEnable); 
             DeleteQuestionCommand = new DelegateCommand(DeleteQuestion, IsDeleteQuestionEnable);
             EditPackOptionsCommand = new DelegateCommand(EditPackOptions, IsEditPackOptionsEnable);
-
-            SwitchToConfigurationModeCommand = new DelegateCommand(StartConfigurationMode);
+            SwitchToConfigurationModeCommand = new DelegateCommand(StartConfigurationMode, IsStartConfigurationModeEnable);
         }
 
         private void AddQuestion(object? obj) 
@@ -89,41 +87,53 @@ namespace Laboration_3.ViewModel
             SelectedQuestion = (ActivePack?.Questions.Count > 0) 
                 ? ActivePack?.Questions.Last() 
                 : ActivePack?.Questions.FirstOrDefault();
-            
-            DeleteQuestionCommand.RaiseCanExecuteChanged();
-            mainWindowViewModel.PlayerViewModel.SwitchToPlayModeCommand.RaiseCanExecuteChanged();
+
+            UpdateCommandStates();
             ChangeTextVisibility();
         }
 
-        private bool IsAddQuestionEnable(object? obj) => mainWindowViewModel.PlayerViewModel.IsPlayerModeVisible == true ? false : true;
+        private bool IsAddQuestionEnable(object? obj) => IsConfigurationModeVisible;
 
         private void DeleteQuestion(object? obj)
         { 
             ActivePack?.Questions.Remove(SelectedQuestion);
-            DeleteQuestionCommand.RaiseCanExecuteChanged();
-            mainWindowViewModel.PlayerViewModel.SwitchToPlayModeCommand.RaiseCanExecuteChanged();
+            UpdateCommandStates();
             ChangeTextVisibility();
         }
 
-        private bool IsDeleteQuestionEnable(object? obj) => DeleteQuestionIsEnable = ActivePack != null && ActivePack?.Questions.Count > 0 ? true : false;
+        private bool IsDeleteQuestionEnable(object? obj) 
+            => IsConfigurationModeVisible && (DeleteQuestionIsEnable = ActivePack != null && ActivePack?.Questions.Count > 0);
 
         private void EditPackOptions(object? obj)
         {
             var packOptionsDialog = new PackOptionsDialog() { DataContext = this };
             packOptionsDialog.Owner = Application.Current.MainWindow;
             packOptionsDialog.ShowDialog();
-        }
+        } 
 
-        private bool IsEditPackOptionsEnable(object? obj) => IsConfigurationModeVisible ? true : false;
+        private bool IsEditPackOptionsEnable(object? obj) => IsConfigurationModeVisible;
 
         private void ChangeTextVisibility() 
-            => TextVisibility = ActivePack?.Questions.Count > 0 && SelectedQuestion != null ? Visibility.Visible : Visibility.Hidden;
+            => TextVisibility = ActivePack?.Questions.Count > 0 && SelectedQuestion != null;
 
         private void StartConfigurationMode(object? obj)
         {
+            mainWindowViewModel.PlayerViewModel.timer.Stop();
+
             IsConfigurationModeVisible = true;
             mainWindowViewModel.PlayerViewModel.IsPlayerModeVisible = false;
             mainWindowViewModel.PlayerViewModel.IsResultModeVisible = false;
+            UpdateCommandStates();
+        }
+
+        private bool IsStartConfigurationModeEnable(object? obj) => IsConfigurationModeVisible ? false : true;
+
+        private void UpdateCommandStates()
+        {
+            AddQuestionCommand.RaiseCanExecuteChanged();
+            DeleteQuestionCommand.RaiseCanExecuteChanged();
+            EditPackOptionsCommand.RaiseCanExecuteChanged();
+            mainWindowViewModel.PlayerViewModel.SwitchToPlayModeCommand.RaiseCanExecuteChanged();
         }
 
     }

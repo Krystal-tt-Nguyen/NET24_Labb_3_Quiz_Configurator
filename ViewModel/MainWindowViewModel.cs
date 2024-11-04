@@ -2,6 +2,7 @@
 using Laboration_3.Dialogs;
 using Laboration_3.Model;
 using System.Collections.ObjectModel;
+using System.Text.Json;
 using System.Windows;
 
 namespace Laboration_3.ViewModel
@@ -13,6 +14,17 @@ namespace Laboration_3.ViewModel
         public PlayerViewModel PlayerViewModel { get; }
         public CreateNewPackDialog PackDialog { get; set; }
 
+        private bool _canExit;
+        public bool CanExit
+        {
+            get => _canExit;
+            set
+            {
+                _canExit = value;
+                RaisePropertyChanged();
+                
+            }
+        }
 
         private bool _deletePackIsEnable;
         public bool DeletePackIsEnable
@@ -25,7 +37,18 @@ namespace Laboration_3.ViewModel
             }
         }
 
+        private bool _isFullscreen;
+        public bool IsFullscreen
+        {
+            get => _isFullscreen;
+            set 
+            { 
+                _isFullscreen = value;
+                RaisePropertyChanged();
+            }
+        }
 
+    
         private QuestionPackViewModel? _activePack;
 		public QuestionPackViewModel? ActivePack
 		{
@@ -61,18 +84,24 @@ namespace Laboration_3.ViewModel
         }
 
 
-        //public event EventHandler OpenDialogOnRequest; // FÖLJER INTE MVVM? - Bryt ut dialog till event
+        //public event EventHandler<bool> OpenDialogOnRequest; 
+        public event EventHandler<bool> ToggleFullScreenRequested;
+        public event EventHandler <bool> ExitGameRequested;
 
         public DelegateCommand ClosePackDialogCommand { get; }
         public DelegateCommand CreateNewPackCommand { get; }
         public DelegateCommand OpenPackDialogCommand { get; }
         public DelegateCommand DeletePackCommand { get; }
         public DelegateCommand SelectActivePackCommand { get; }
+        public DelegateCommand ToggleWindowFullScreenCommand { get; }
+        public DelegateCommand ExitGameCommand { get; }
 
 
         public MainWindowViewModel()
         {
             DeletePackIsEnable = true;
+            IsFullscreen = false;
+            CanExit = false;
 
             Packs = new ObservableCollection<QuestionPackViewModel>();
 			ActivePack = new QuestionPackViewModel(new QuestionPack("Default Question Pack"));
@@ -86,10 +115,12 @@ namespace Laboration_3.ViewModel
             CreateNewPackCommand = new DelegateCommand(CreateNewPack);
             OpenPackDialogCommand = new DelegateCommand(OpenNewPackDialog);
             DeletePackCommand = new DelegateCommand(DeletePack, IsDeletePackEnable);
-            SelectActivePackCommand = new DelegateCommand(SelectActivePack);              
+            SelectActivePackCommand = new DelegateCommand(SelectActivePack);
+            ToggleWindowFullScreenCommand = new DelegateCommand(ToggleWindowFullScreen);
+            ExitGameCommand = new DelegateCommand(ExitGame);
         }
 
-        private void OpenNewPackDialog(object? obj)
+        private void OpenNewPackDialog(object? obj) // Bryta ut - MVVM?
         {
             NewPack = new QuestionPackViewModel(new QuestionPack());
             PackDialog = new CreateNewPackDialog();
@@ -106,13 +137,14 @@ namespace Laboration_3.ViewModel
             {
                 Packs.Add(NewPack);
                 ActivePack = NewPack;
+
+                ConfigurationViewModel.DeleteQuestionCommand.RaiseCanExecuteChanged();
                 DeletePackCommand.RaiseCanExecuteChanged();
             }
-
             PackDialog.Close();
         }
 
-        private void ClosePackDialog(object? obj) => PackDialog.Close();
+        private void ClosePackDialog(object? obj) => PackDialog.Close(); // Bryta ut - MVVM?
 
         private void DeletePack(object? obj)
         {
@@ -142,14 +174,26 @@ namespace Laboration_3.ViewModel
             }
         }
 
+        public void ToggleWindowFullScreen(object? obj)
+        { 
+            IsFullscreen = !IsFullscreen;
+            ToggleFullScreenRequested?.Invoke(this, _isFullscreen);
+        }
+       
+        public void ExitGame(object? obj)
+        {
+            CanExit = true;
+            ExitGameRequested?.Invoke(this, CanExit);
+        }
 
-        // public void ExitGame(object? obj) => Close(); HUR AVSLUTA PROGRAMMET?!!!!!!!!
-        // Application.Current.Shutdown();??
+        //public async Task LoadJSON()
+        //{
+        //    var jsonSerializer = new JsonSerializerOptions();
+        //}
 
     }
 }
 
-
 //public event EventHandler OpenPackDialog;
 //OpenPackDialog?.Invoke(this, EventArgs.Empty);
-        
+

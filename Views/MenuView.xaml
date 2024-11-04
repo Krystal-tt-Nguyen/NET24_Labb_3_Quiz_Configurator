@@ -40,7 +40,8 @@
                       InputGestureText="Ctrl+I"/>
             <Separator/>
 
-            <MenuItem Header="E_xit"
+            <MenuItem Command ="{Binding ExitGameCommand}"
+                      Header="E_xit"
                       Icon="{fa:Icon DoorOpen}"
                       InputGestureText="Alt+F4"/>
         </MenuItem>
@@ -68,7 +69,8 @@
             <MenuItem Command="{Binding PlayerViewModel.SwitchToPlayModeCommand}"
                       Header="_Play"
                       Icon="{fa:Icon Play}"
-                      InputGestureText="Ctrl+P"/>
+                      InputGestureText="Ctrl+P"
+                      IsEnabled="{Binding PlayerViewModel.PlayButtonIsEnable, UpdateSourceTrigger=PropertyChanged}"/>
 
             <MenuItem Command="{Binding ConfigurationViewModel.SwitchToConfigurationModeCommand}"
                       Header="_Edit"
@@ -76,7 +78,8 @@
                       InputGestureText="Ctrl+E"/>
             <Separator/>
 
-            <MenuItem Header="_Fullscreen"
+            <MenuItem Command="{Binding ToggleWindowFullScreenCommand}"                 
+                      Header="_Fullscreen"
                       Icon="{fa:Icon Expand}"
                       InputGestureText="Alt+Enter"/>
         </MenuItem>

@@ -10,9 +10,7 @@ namespace Laboration_3.ViewModel
         private readonly MainWindowViewModel? mainWindowViewModel;
         public QuestionPackViewModel? ActivePack { get => mainWindowViewModel.ActivePack; }
 
-
-        private DispatcherTimer timer;
-
+        public DispatcherTimer timer;
         private int _timeLimit;
         public int TimeLimit
         {
@@ -23,7 +21,6 @@ namespace Laboration_3.ViewModel
                 RaisePropertyChanged();
             }
         }
-
 
         private int correctAnswerIndex;
         private int currentQuestionIndex;
@@ -110,6 +107,17 @@ namespace Laboration_3.ViewModel
             }
         }
 
+        private bool _playButtonIsEnable;
+        public bool PlayButtonIsEnable
+        {
+            get => _playButtonIsEnable;
+            set 
+            {
+                _playButtonIsEnable = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private bool _isResultModeVisible;
         public bool IsResultModeVisible
         {
@@ -148,10 +156,11 @@ namespace Laboration_3.ViewModel
         public DelegateCommand SwitchToPlayModeCommand { get; }
         public DelegateCommand CheckPlayerAnswerCommand { get; }
 
+
         public PlayerViewModel(MainWindowViewModel? mainWindowViewModel)
         {
             this.mainWindowViewModel = mainWindowViewModel;
-            
+
             SwitchToPlayModeCommand = new DelegateCommand(StartPlayMode, IsPlayModeEnable);
             CheckPlayerAnswerCommand = new DelegateCommand(OnSelectedAnswer);
 
@@ -161,6 +170,7 @@ namespace Laboration_3.ViewModel
 
         private void StartPlayMode(object? obj)
         {
+            PlayButtonIsEnable = false;
             IsPlayerModeVisible = true;
             IsResultModeVisible = false;
             mainWindowViewModel.ConfigurationViewModel.IsConfigurationModeVisible = false;
@@ -179,8 +189,9 @@ namespace Laboration_3.ViewModel
             LoadNextQuestion();
         }
 
-        private bool IsPlayModeEnable(object? obj) => ActivePack.Questions.Count > 0 ? true : false;
-
+        private bool IsPlayModeEnable(object? obj) 
+            => (PlayButtonIsEnable = !IsPlayerModeVisible /*&& !IsResultModeVisible*/) && ActivePack.Questions.Count > 0; //Restart ej aktiv då?
+       
         private void OnTimerTick(object? sender, EventArgs e)
         {
             if (TimeLimit > 0)
@@ -190,9 +201,9 @@ namespace Laboration_3.ViewModel
             else
             {
                 timer.Stop();
-                AwaitDisplayCorrectAnswer();
+                AwaitDisplayCorrectAnswer(); 
             }
-        }
+        } 
 
         private void LoadNextQuestion()
         {
@@ -204,7 +215,7 @@ namespace Laboration_3.ViewModel
             if (currentQuestionIndex < Questions.Count)
             {
                 QuestionStatus = $"Question {currentQuestionIndex + 1} of {Questions.Count}";
-                PrepareQuestion();
+                GetNextQuestion();
             }
             else
             {
@@ -212,7 +223,7 @@ namespace Laboration_3.ViewModel
             }
         }
 
-        private void PrepareQuestion()
+        private void GetNextQuestion()
         {
             CurrentQuestion = ActivePack.Questions[currentQuestionIndex].Query;
             CorrectAnswer = ActivePack.Questions[currentQuestionIndex].CorrectAnswer;
@@ -226,46 +237,46 @@ namespace Laboration_3.ViewModel
             };
   
             ShuffledAnswers = Answers.OrderBy(a => rnd.Next()).ToList();
+            correctAnswerIndex = ShuffledAnswers.IndexOf(CorrectAnswer);
+            playerAnswerIndex = -1;
             currentQuestionIndex++;
         }
 
-        private async void OnSelectedAnswer(object? obj)
+        private async void OnSelectedAnswer(object? obj) 
         {
-            correctAnswerIndex = ShuffledAnswers.IndexOf(CorrectAnswer);
+            var playerAnswer = obj as string;
 
-            if (obj == null) /// FIXA När spelaren ej trycker på något
+            if (obj == null) 
             {
                 await DisplayCorrectAnswer();
                 return;
             }
   
-            var playerAnswer = obj as string;
             playerAnswerIndex = ShuffledAnswers.IndexOf(playerAnswer);
-
             await DisplayCorrectAnswer();
         }
 
         private async Task DisplayCorrectAnswer()
         {
             timer.Stop();
-
-            if (playerAnswerIndex == correctAnswerIndex)
+            if (playerAnswerIndex != -1)
             {
-                amountcorrectAnswers++;
-                CheckmarkVisibilities[playerAnswerIndex] = Visibility.Visible;
-            }
-            else
-            {
-                CrossVisibilities[playerAnswerIndex] = Visibility.Visible;
+                if (playerAnswerIndex == correctAnswerIndex)
+                {
+                    amountcorrectAnswers++;
+                    CheckmarkVisibilities[playerAnswerIndex] = Visibility.Visible;
+                }
+                else
+                {
+                    CrossVisibilities[playerAnswerIndex] = Visibility.Visible;
+                }
             }
 
             CheckmarkVisibilities[correctAnswerIndex] = Visibility.Visible;
 
-            RaisePropertyChanged("CheckmarkVisibilities");
-            RaisePropertyChanged("CrossVisibilities");
+            UpdateCommandStates();
 
             await Task.Delay(2000);
-
             LoadNextQuestion(); 
         }
 
@@ -273,26 +284,38 @@ namespace Laboration_3.ViewModel
 
         private void ResetChecksAndCrossVisibility()
         {
-            for (int i = 0; i < CheckmarkVisibilities.Length; i++)
+            for (int i = 0; i < 4; i++)
             {
                 CheckmarkVisibilities[i] = Visibility.Hidden;
                 CrossVisibilities[i] = Visibility.Hidden;
             }
 
-            RaisePropertyChanged("CheckmarkVisibilities");
-            RaisePropertyChanged("CrossVisibilities");
+            UpdateCommandStates();
         }
 
-        public void SwitchToResultView()
+        private void SwitchToResultView()
         {
             timer.Stop();
             timer = null;
-
-            Results = $"You got {amountcorrectAnswers} out of {Questions.Count} answers correct";
-
+            
             IsResultModeVisible = true;
             IsPlayerModeVisible = false;
+
+            Results = $"You got {amountcorrectAnswers} out of {Questions.Count} answers correct";
+            
+            UpdateCommandStates();
         }
-       
+
+        private void UpdateCommandStates()
+        {
+            RaisePropertyChanged("CheckmarkVisibilities");
+            RaisePropertyChanged("CrossVisibilities");
+
+            SwitchToPlayModeCommand.RaiseCanExecuteChanged();
+            mainWindowViewModel.ConfigurationViewModel.AddQuestionCommand.RaiseCanExecuteChanged();
+            mainWindowViewModel.ConfigurationViewModel.EditPackOptionsCommand.RaiseCanExecuteChanged();
+            mainWindowViewModel.ConfigurationViewModel.DeleteQuestionCommand.RaiseCanExecuteChanged();
+            mainWindowViewModel.ConfigurationViewModel.SwitchToConfigurationModeCommand.RaiseCanExecuteChanged();
+        }
     }
 }
