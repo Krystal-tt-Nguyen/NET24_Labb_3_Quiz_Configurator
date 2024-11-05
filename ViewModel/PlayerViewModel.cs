@@ -164,7 +164,7 @@ namespace Laboration_3.ViewModel
             this.mainWindowViewModel = mainWindowViewModel;
 
             SwitchToPlayModeCommand = new DelegateCommand(StartPlayMode, IsPlayModeEnable);
-            CheckPlayerAnswerCommand = new DelegateCommand(OnSelectedAnswer);
+            CheckPlayerAnswerCommand = new DelegateCommand(OnSelectedAnswerAsync);
 
             CheckmarkVisibilities = new bool[4] {false, false, false, false };
             CrossVisibilities = new bool[4] { false, false, false, false };
@@ -209,7 +209,7 @@ namespace Laboration_3.ViewModel
             else
             {
                 timer.Stop();
-                AwaitDisplayCorrectAnswer(); 
+                AwaitDisplayCorrectAnswerAsync(); 
             }
         } 
 
@@ -250,20 +250,20 @@ namespace Laboration_3.ViewModel
             currentQuestionIndex++;
         }
 
-        private async void OnSelectedAnswer(object? obj) 
+        private async void OnSelectedAnswerAsync(object? obj) 
         {
             playerAnswerIndex = int.Parse(obj as string);
 
             if (obj == null) 
             {
-                await DisplayCorrectAnswer();
+                await DisplayCorrectAnswerAsync();
                 return;
             }
   
-            await DisplayCorrectAnswer();
+            await DisplayCorrectAnswerAsync();
         }
 
-        private async Task DisplayCorrectAnswer()
+        private async Task DisplayCorrectAnswerAsync()
         {
             timer.Stop();
 
@@ -288,7 +288,7 @@ namespace Laboration_3.ViewModel
             LoadNextQuestion(); 
         }
 
-        private async void AwaitDisplayCorrectAnswer() => await DisplayCorrectAnswer();
+        private async void AwaitDisplayCorrectAnswerAsync() => await DisplayCorrectAnswerAsync();
 
         private void ResetChecksAndCrossVisibility()
         {
@@ -309,7 +309,7 @@ namespace Laboration_3.ViewModel
             IsResultModeVisible = true;
             IsPlayerModeVisible = false;
 
-            Results = $"You got {amountcorrectAnswers} out of {Questions.Count} answers correct";
+            Results = $"You got {amountcorrectAnswers} out of {Questions.Count} answer(s) correct";
             
             UpdateCommandStates();
         }

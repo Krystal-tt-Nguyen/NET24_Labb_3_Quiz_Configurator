@@ -7,8 +7,8 @@
              xmlns:local="clr-namespace:Laboration_3.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             DataContext="{Binding PlayerViewModel}"
-             Background="White">
+             Background="MintCream"
+             DataContext="{Binding PlayerViewModel}">
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>

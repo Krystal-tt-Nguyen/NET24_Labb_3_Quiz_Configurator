@@ -1,10 +1,12 @@
 ﻿using Laboration_3.Command;
 using Laboration_3.Dialogs;
+using Laboration_3.JSON;
 using Laboration_3.Model;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Text.Json;
 using System.Windows;
+using System.Windows.Shapes;
+using Path = System.IO.Path;
 
 namespace Laboration_3.ViewModel
 {
@@ -97,30 +99,28 @@ namespace Laboration_3.ViewModel
         public DelegateCommand ExitGameCommand { get; }
 
 
+        //private JsonFileHandler JsonFileHandler;
+        private string filePath;
+
+
         public MainWindowViewModel()
         {
             DeletePackIsEnable = true;
             IsFullscreen = false;
             CanExit = false;
 
-            //string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-
-       //     if (Path.Exists(path))
-       //     {
-       //         WriteToJson();
-       //     }
-       //     else
-       //     {
-       //         Packs = new ObservableCollection<QuestionPackViewModel>();
-			    //ActivePack = new QuestionPackViewModel(new QuestionPack("Default Question Pack"));
-            //         Packs.Add(ActivePack);
-            //         ActivePack = Packs?.FirstOrDefault();
-            //     }
-
             Packs = new ObservableCollection<QuestionPackViewModel>();
             ActivePack = new QuestionPackViewModel(new QuestionPack("Default Question Pack"));
             Packs.Add(ActivePack);
             ActivePack = Packs?.FirstOrDefault();
+
+            //JsonFileHandler = new JsonFileHandler();
+            filePath = JsonFileHandler.GetFilePath();
+
+            if (Path.Exists(filePath))
+            {
+                JsonFileHandler.WriteToJson(filePath, Packs);
+            }
 
             ConfigurationViewModel = new ConfigurationViewModel(this);
 			PlayerViewModel = new PlayerViewModel(this);
@@ -141,8 +141,6 @@ namespace Laboration_3.ViewModel
             PackDialog.DataContext = this;
             PackDialog.Owner = System.Windows.Application.Current.MainWindow;
             PackDialog.ShowDialog();
-
-            //OpenDialogOnRequest?.Invoke(this, EventArgs.Empty);
         }
 
         private void CreateNewPack(object? obj)
@@ -154,6 +152,7 @@ namespace Laboration_3.ViewModel
 
                 ConfigurationViewModel.DeleteQuestionCommand.RaiseCanExecuteChanged();
                 DeletePackCommand.RaiseCanExecuteChanged();
+                JsonFileHandler?.WriteToJson(filePath, Packs);
             }
             PackDialog.Close();
         }
@@ -175,6 +174,8 @@ namespace Laboration_3.ViewModel
             {
                 ActivePack = Packs.FirstOrDefault();
             }
+
+            JsonFileHandler?.WriteToJson(filePath, Packs);
         }
         
         private bool IsDeletePackEnable(object? obj) => Packs != null && Packs.Count > 1 ? true : false;
@@ -188,44 +189,22 @@ namespace Laboration_3.ViewModel
             }
         }
 
-        public void ToggleWindowFullScreen(object? obj)
+        private void ToggleWindowFullScreen(object? obj)
         { 
             IsFullscreen = !IsFullscreen;
             ToggleFullScreenRequested?.Invoke(this, _isFullscreen);
-        }
+        } //innan public
        
-        public async void ExitGame(object? obj)
+        private async void ExitGame(object? obj)
         {
-            //await WriteToJson();
-            
+            await JsonFileHandler.WriteToJson(filePath, Packs);
+
             CanExit = true;
             ExitGameRequested?.Invoke(this, CanExit);
         }
 
-
-        //public async Task WriteToJson()
-        //{
-        //    var options = new JsonSerializerOptions()
-        //    {
-        //        IncludeFields = true,
-        //        IgnoreReadOnlyProperties = false
-        //    };
-
-        //    string json = JsonSerializer.Serialize(Packs, options);
-        //    string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-
-        //    path = Path.Combine(path, "Laboration_3");
-        //    Directory.CreateDirectory(path);
-        //    path = Path.Combine(path, "Laboration_3.json");
-
-        //    File.WriteAllText(path, json);
-        //}
-
-        //public async Task ReadFromJson()
-        //{
-
-        //}
-
     }
 }
 
+
+//OpenDialogOnRequest?.Invoke(this, EventArgs.Empty);
