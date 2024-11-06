@@ -1,6 +1,5 @@
 ﻿using Laboration_3.Command;
 using Laboration_3.Model;
-using System.Collections.ObjectModel;
 using System.Windows.Threading;
 
 namespace Laboration_3.ViewModel
@@ -74,6 +73,8 @@ namespace Laboration_3.ViewModel
             }
         }
 
+
+        private bool _isAnswerButtonActive;
 
         private List<string> _shuffledAnswers;
         public List<string> ShuffledAnswers
@@ -154,7 +155,7 @@ namespace Laboration_3.ViewModel
                 RaisePropertyChanged();
             }
         }
-
+        
 
         public DelegateCommand SwitchToPlayModeCommand { get; }
         public DelegateCommand CheckPlayerAnswerCommand { get; }
@@ -163,9 +164,10 @@ namespace Laboration_3.ViewModel
         public PlayerViewModel(MainWindowViewModel? mainWindowViewModel)
         {
             this.mainWindowViewModel = mainWindowViewModel;
+            _isAnswerButtonActive = true;
 
             SwitchToPlayModeCommand = new DelegateCommand(StartPlayMode, IsPlayModeEnable);
-            CheckPlayerAnswerCommand = new DelegateCommand(OnSelectedAnswerAsync);
+            CheckPlayerAnswerCommand = new DelegateCommand(OnSelectedAnswerAsync, IsAnswerButtonActive);
 
             CheckmarkVisibilities = new bool[4] {false, false, false, false };
             CrossVisibilities = new bool[4] { false, false, false, false };
@@ -199,8 +201,7 @@ namespace Laboration_3.ViewModel
             {
                 return false;
             }
-
-            return (PlayButtonIsEnable = !IsPlayerModeVisible) && ActivePack.Questions.Count > 0; 
+            return (PlayButtonIsEnable = !IsPlayerModeVisible && ActivePack.Questions.Count > 0); 
         }
        
         private void OnTimerTick(object? sender, EventArgs e)
@@ -262,13 +263,17 @@ namespace Laboration_3.ViewModel
                 await DisplayCorrectAnswerAsync();
                 return;
             }
-  
+
             await DisplayCorrectAnswerAsync();
         }
+
+        private bool IsAnswerButtonActive(object? obj) => _isAnswerButtonActive;
 
         private async Task DisplayCorrectAnswerAsync()
         {
             _timer.Stop();
+            _isAnswerButtonActive = false;
+            CheckPlayerAnswerCommand.RaiseCanExecuteChanged();
 
             if (playerAnswerIndex != -1)
             {
@@ -282,11 +287,14 @@ namespace Laboration_3.ViewModel
                     CrossVisibilities[playerAnswerIndex] = true;
                 }
             }
-
             CheckmarkVisibilities[correctAnswerIndex] = true;
-            UpdateCommandStates();
 
+            UpdateCommandStates();
             await Task.Delay(2000);
+
+            _isAnswerButtonActive = true;
+            CheckPlayerAnswerCommand.RaiseCanExecuteChanged();
+
             LoadNextQuestion(); 
         }
 
@@ -311,7 +319,7 @@ namespace Laboration_3.ViewModel
             IsResultModeVisible = true;
             IsPlayerModeVisible = false;
 
-            Results = $"You got {amountcorrectAnswers} out of {Questions.Count} answer(s) correct";
+            Results = $"You got {amountcorrectAnswers} out of {Questions.Count} question(s) correct";
             
             UpdateCommandStates();
         }

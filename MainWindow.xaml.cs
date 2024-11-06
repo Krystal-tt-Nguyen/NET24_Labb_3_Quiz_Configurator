@@ -1,7 +1,6 @@
 ﻿using Laboration_3.Dialogs;
 using Laboration_3.ViewModel;
 using System.Windows;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace Laboration_3
 {

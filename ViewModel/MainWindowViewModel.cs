@@ -162,7 +162,6 @@ namespace Laboration_3.ViewModel
             {
                 ActivePack = Packs.FirstOrDefault();
             }
-
             SaveToJsonAsync();
         }
 
@@ -174,10 +173,8 @@ namespace Laboration_3.ViewModel
             {
                 SelectedPack = selectedPack;
                 ActivePack = SelectedPack;
+                SaveToJsonAsync();
             }
-
-            ConfigurationViewModel.AddQuestionCommand.RaiseCanExecuteChanged();
-            ConfigurationViewModel.DeleteQuestionCommand.RaiseCanExecuteChanged();
         }
 
         private void ToggleWindowFullScreen(object? obj)
@@ -223,7 +220,6 @@ namespace Laboration_3.ViewModel
             {
                 IncludeFields = true,
                 IgnoreReadOnlyProperties = false,
-                WriteIndented = true
             };
 
             string jsonString = JsonSerializer.Serialize(Packs, options);

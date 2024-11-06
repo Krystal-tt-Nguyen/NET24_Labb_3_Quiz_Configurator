@@ -40,6 +40,7 @@ namespace Laboration_3.ViewModel
             set
             {
                 _selectedQuestion = value;
+                DeleteQuestionCommand.RaiseCanExecuteChanged();
                 RaisePropertyChanged();
                 ChangeTextVisibility();
             }
@@ -71,14 +72,14 @@ namespace Laboration_3.ViewModel
 
             DeleteQuestionIsEnable = false;
             IsConfigurationModeVisible = true;
-
-            SelectedQuestion = ActivePack?.Questions.FirstOrDefault();
-            TextVisibility = ActivePack?.Questions.Count > 0;
             
             AddQuestionCommand = new DelegateCommand(AddQuestion, IsAddQuestionEnable); 
             DeleteQuestionCommand = new DelegateCommand(DeleteQuestion, IsDeleteQuestionEnable);
             EditPackOptionsCommand = new DelegateCommand(EditPackOptions, IsEditPackOptionsEnable);
             SwitchToConfigurationModeCommand = new DelegateCommand(StartConfigurationMode, IsStartConfigurationModeEnable);
+
+            SelectedQuestion = ActivePack?.Questions.FirstOrDefault();
+            TextVisibility = ActivePack?.Questions.Count > 0;
         }
 
         private void AddQuestion(object? obj) 
@@ -104,8 +105,8 @@ namespace Laboration_3.ViewModel
             mainWindowViewModel.SaveToJsonAsync();
         }
 
-        private bool IsDeleteQuestionEnable(object? obj) 
-            => IsConfigurationModeVisible && (DeleteQuestionIsEnable = ActivePack != null && ActivePack?.Questions.Count > 0);
+        private bool IsDeleteQuestionEnable(object? obj)
+            => IsConfigurationModeVisible && SelectedQuestion != null && (DeleteQuestionIsEnable = (ActivePack != null && ActivePack?.Questions.Count > 0));
 
         private void EditPackOptions(object? obj)  
         {
