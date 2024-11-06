@@ -73,7 +73,7 @@
                     HorizontalAlignment="Center" 
                     VerticalAlignment="Center" 
                     Margin="10 0 10 0">
-            <Button Command ="{Binding ClosePackDialogCommand}"
+            <Button Command ="{Binding CloseDialogCommand}"
                     Content="Cancel"
                     Margin="0 0 10 0" 
                     Padding="10 0 10 0"/>

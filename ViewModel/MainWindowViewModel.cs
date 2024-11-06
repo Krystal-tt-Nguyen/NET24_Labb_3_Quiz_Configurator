@@ -1,11 +1,8 @@
 ﻿using Laboration_3.Command;
-using Laboration_3.Dialogs;
-using Laboration_3.JSON;
 using Laboration_3.Model;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Windows;
-using System.Windows.Shapes;
+using System.Text.Json;
 using Path = System.IO.Path;
 
 namespace Laboration_3.ViewModel
@@ -15,7 +12,8 @@ namespace Laboration_3.ViewModel
         public ObservableCollection<QuestionPackViewModel> Packs { get; set; }
         public ConfigurationViewModel ConfigurationViewModel { get; }
         public PlayerViewModel PlayerViewModel { get; }
-        public CreateNewPackDialog PackDialog { get; set; }
+        public string FilePath { get; set; }
+
 
         private bool _canExit;
         public bool CanExit
@@ -25,7 +23,7 @@ namespace Laboration_3.ViewModel
             {
                 _canExit = value;
                 RaisePropertyChanged();
-                
+
             }
         }
 
@@ -44,25 +42,25 @@ namespace Laboration_3.ViewModel
         public bool IsFullscreen
         {
             get => _isFullscreen;
-            set 
-            { 
+            set
+            {
                 _isFullscreen = value;
                 RaisePropertyChanged();
             }
         }
 
-    
+
         private QuestionPackViewModel? _activePack;
-		public QuestionPackViewModel? ActivePack
-		{
-			get => _activePack; 
-			set 
-			{ 
-				_activePack = value;
-				RaisePropertyChanged();
+        public QuestionPackViewModel? ActivePack
+        {
+            get => _activePack;
+            set
+            {
+                _activePack = value;
+                RaisePropertyChanged();
                 ConfigurationViewModel?.RaisePropertyChanged();
             }
-		}
+        }
 
         private QuestionPackViewModel? _newPack;
         public QuestionPackViewModel? NewPack
@@ -87,61 +85,56 @@ namespace Laboration_3.ViewModel
         }
 
 
+        public event EventHandler CloseDialogRequested; 
+        public event EventHandler DeletePackRequested;
+        public event EventHandler<bool> ExitGameRequested;
+        public event EventHandler OpenNewPackDialogRequested; 
         public event EventHandler<bool> ToggleFullScreenRequested;
-        public event EventHandler <bool> ExitGameRequested;
 
-        public DelegateCommand ClosePackDialogCommand { get; }
-        public DelegateCommand CreateNewPackCommand { get; }
-        public DelegateCommand OpenPackDialogCommand { get; }
+        public DelegateCommand CloseDialogCommand { get; }
+        public DelegateCommand CreateNewPackCommand { get; } 
         public DelegateCommand DeletePackCommand { get; }
+        public DelegateCommand ExitGameCommand { get; }
+        public DelegateCommand OpenDialogCommand { get; } 
+        public DelegateCommand SaveOnShortcutCommand { get; }
         public DelegateCommand SelectActivePackCommand { get; }
         public DelegateCommand ToggleWindowFullScreenCommand { get; }
-        public DelegateCommand ExitGameCommand { get; }
-
-
-        //private JsonFileHandler JsonFileHandler;
-        private string filePath;
 
 
         public MainWindowViewModel()
         {
+            CanExit = false;
             DeletePackIsEnable = true;
             IsFullscreen = false;
-            CanExit = false;
 
             Packs = new ObservableCollection<QuestionPackViewModel>();
             ActivePack = new QuestionPackViewModel(new QuestionPack("Default Question Pack"));
-            Packs.Add(ActivePack);
-            ActivePack = Packs?.FirstOrDefault();
 
-            //JsonFileHandler = new JsonFileHandler();
-            filePath = JsonFileHandler.GetFilePath();
-
-            if (Path.Exists(filePath))
-            {
-                JsonFileHandler.WriteToJson(filePath, Packs);
-            }
+            FilePath = GetFilePath();
+            InitializeDataAsync();
 
             ConfigurationViewModel = new ConfigurationViewModel(this);
-			PlayerViewModel = new PlayerViewModel(this);
+            PlayerViewModel = new PlayerViewModel(this);
 
-            ClosePackDialogCommand = new DelegateCommand(ClosePackDialog);
+            CloseDialogCommand = new DelegateCommand(ClosePackDialog);
+            OpenDialogCommand = new DelegateCommand(OpenPackDialog); 
+
             CreateNewPackCommand = new DelegateCommand(CreateNewPack);
-            OpenPackDialogCommand = new DelegateCommand(OpenNewPackDialog);
-            DeletePackCommand = new DelegateCommand(DeletePack, IsDeletePackEnable);
+            DeletePackCommand = new DelegateCommand(RequestDeletePack, IsDeletePackEnable);
+
+            SaveOnShortcutCommand = new DelegateCommand(SaveOnShortcut);
             SelectActivePackCommand = new DelegateCommand(SelectActivePack);
             ToggleWindowFullScreenCommand = new DelegateCommand(ToggleWindowFullScreen);
             ExitGameCommand = new DelegateCommand(ExitGame);
         }
 
-        private void OpenNewPackDialog(object? obj) // Bryta ut - MVVM?
+        private void OpenPackDialog(object? obj) 
         {
             NewPack = new QuestionPackViewModel(new QuestionPack());
-            PackDialog = new CreateNewPackDialog();
-            PackDialog.DataContext = this;
-            PackDialog.Owner = System.Windows.Application.Current.MainWindow;
-            PackDialog.ShowDialog();
+            OpenNewPackDialogRequested.Invoke(this, EventArgs.Empty);
         }
+
+        private void ClosePackDialog(object? obj) => CloseDialogRequested.Invoke(this, EventArgs.Empty); 
 
         private void CreateNewPack(object? obj)
         {
@@ -152,59 +145,103 @@ namespace Laboration_3.ViewModel
 
                 ConfigurationViewModel.DeleteQuestionCommand.RaiseCanExecuteChanged();
                 DeletePackCommand.RaiseCanExecuteChanged();
-                JsonFileHandler?.WriteToJson(filePath, Packs);
+                SaveToJsonAsync();
             }
-            PackDialog.Close();
+
+            CloseDialogRequested.Invoke(this, EventArgs.Empty);
         }
 
-        private void ClosePackDialog(object? obj) => PackDialog.Close(); // Bryta ut - MVVM?
-
-        private void DeletePack(object? obj)
+        private void RequestDeletePack(object? obj) => DeletePackRequested?.Invoke(this, EventArgs.Empty);
+    
+        public void DeletePack()
         {
-            MessageBoxResult result = MessageBox.Show($"Are you sure you want to delete \"{ActivePack.Name}\"?", 
-                "Delete Question Pack?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            Packs.Remove(ActivePack);
+            DeletePackCommand.RaiseCanExecuteChanged();
 
-            if (result == MessageBoxResult.Yes)
-            {
-                Packs.Remove(ActivePack);
-                DeletePackCommand.RaiseCanExecuteChanged();
-            }
-            
             if (Packs.Count > 0)
             {
                 ActivePack = Packs.FirstOrDefault();
             }
 
-            JsonFileHandler?.WriteToJson(filePath, Packs);
+            SaveToJsonAsync();
         }
-        
-        private bool IsDeletePackEnable(object? obj) => Packs != null && Packs.Count > 1 ? true : false;
+
+        private bool IsDeletePackEnable(object? obj) => Packs != null && Packs.Count > 1;
 
         private void SelectActivePack(object? obj)
         {
             if (obj is QuestionPackViewModel selectedPack)
             {
-                SelectedPack = selectedPack; 
+                SelectedPack = selectedPack;
                 ActivePack = SelectedPack;
             }
+
+            ConfigurationViewModel.AddQuestionCommand.RaiseCanExecuteChanged();
+            ConfigurationViewModel.DeleteQuestionCommand.RaiseCanExecuteChanged();
         }
 
         private void ToggleWindowFullScreen(object? obj)
-        { 
+        {
             IsFullscreen = !IsFullscreen;
             ToggleFullScreenRequested?.Invoke(this, _isFullscreen);
-        } //innan public
-       
+        }
+
         private async void ExitGame(object? obj)
         {
-            await JsonFileHandler.WriteToJson(filePath, Packs);
+            await SaveToJsonAsync();
 
             CanExit = true;
             ExitGameRequested?.Invoke(this, CanExit);
         }
 
+        private string GetFilePath()
+        {
+            string appDataFilePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string directoryFilePath = Path.Combine(appDataFilePath, "Laboration_3");
+
+            if (!Directory.Exists(directoryFilePath))
+            {
+                Directory.CreateDirectory(directoryFilePath);
+            }
+
+            string filePath = Path.Combine(directoryFilePath, "Laboration_3.json");
+            return filePath;
+        }
+
+        private async Task InitializeDataAsync()
+        {
+            if (Path.Exists(FilePath))
+            {
+                await ReadFromJsonAsync();
+                ActivePack = Packs?.FirstOrDefault();
+            }
+        }
+
+        public async Task SaveToJsonAsync()
+        {
+            var options = new JsonSerializerOptions()
+            {
+                IncludeFields = true,
+                IgnoreReadOnlyProperties = false,
+                WriteIndented = true
+            };
+
+            string jsonString = JsonSerializer.Serialize(Packs, options);
+            await File.WriteAllTextAsync(FilePath, jsonString);
+        }
+
+        private async Task ReadFromJsonAsync()
+        {
+            string jsonString = await File.ReadAllTextAsync(FilePath);
+            var questionPack = JsonSerializer.Deserialize<QuestionPack[]>(jsonString);
+
+            foreach (var pack in questionPack)
+            {
+                Packs.Add(new QuestionPackViewModel(pack));
+            }
+        }
+
+        private void SaveOnShortcut(object? obj) => SaveToJsonAsync();
+
     }
 }
-
-
-//OpenDialogOnRequest?.Invoke(this, EventArgs.Empty);

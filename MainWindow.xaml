@@ -33,6 +33,9 @@
         <KeyBinding Key="Return"
                     Modifiers="Alt"
                     Command="{Binding ToggleWindowFullScreenCommand}"/>
+        <KeyBinding Key="S"
+                    Modifiers="Ctrl"
+                    Command="{Binding SaveOnShortcutCommand}"/>
     </Window.InputBindings>
 
     <Grid Background="MintCream">
@@ -49,8 +52,3 @@
     </Grid>
 
 </Window>
-
-
-    <!--<Window.InputBindings>
-        <KeyBinding Key="U" Modifiers="Ctrl" Command="{Binding PlayerViewModel.UpdateButtonCommand}" />
-</Window.InputBindings>-->

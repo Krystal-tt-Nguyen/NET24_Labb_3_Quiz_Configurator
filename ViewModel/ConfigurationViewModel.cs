@@ -1,7 +1,5 @@
 ﻿using Laboration_3.Command;
-using Laboration_3.Dialogs;
 using Laboration_3.Model;
-using System.Windows;
 
 namespace Laboration_3.ViewModel
 {
@@ -9,6 +7,7 @@ namespace Laboration_3.ViewModel
     {
         private readonly MainWindowViewModel? mainWindowViewModel;
         public QuestionPackViewModel? ActivePack { get => mainWindowViewModel.ActivePack; }
+        private string FilePath { get => mainWindowViewModel.FilePath; }
 
 
         private bool _deleteQuestionIsEnable;
@@ -58,6 +57,8 @@ namespace Laboration_3.ViewModel
         }
 
 
+        public event EventHandler EditPackOptionsRequested; 
+        
         public DelegateCommand AddQuestionCommand { get; }
         public DelegateCommand DeleteQuestionCommand { get; }
         public DelegateCommand EditPackOptionsCommand { get; }
@@ -90,7 +91,7 @@ namespace Laboration_3.ViewModel
 
             UpdateCommandStates();
             ChangeTextVisibility();
-            //mainWindowViewModel.WriteToJson();
+            mainWindowViewModel.SaveToJsonAsync();
         }
 
         private bool IsAddQuestionEnable(object? obj) => IsConfigurationModeVisible;
@@ -100,18 +101,16 @@ namespace Laboration_3.ViewModel
             ActivePack?.Questions.Remove(SelectedQuestion);
             UpdateCommandStates();
             ChangeTextVisibility();
-            //mainWindowViewModel.WriteToJson();
+            mainWindowViewModel.SaveToJsonAsync();
         }
 
         private bool IsDeleteQuestionEnable(object? obj) 
             => IsConfigurationModeVisible && (DeleteQuestionIsEnable = ActivePack != null && ActivePack?.Questions.Count > 0);
 
-        private void EditPackOptions(object? obj)
+        private void EditPackOptions(object? obj)  
         {
-            var packOptionsDialog = new PackOptionsDialog() { DataContext = this };
-            packOptionsDialog.Owner = Application.Current.MainWindow;
-            packOptionsDialog.ShowDialog();
-            //mainWindowViewModel.WriteToJson();
+            EditPackOptionsRequested.Invoke(this, EventArgs.Empty);
+            mainWindowViewModel.SaveToJsonAsync();
         } 
 
         private bool IsEditPackOptionsEnable(object? obj) => IsConfigurationModeVisible;
@@ -121,7 +120,7 @@ namespace Laboration_3.ViewModel
 
         private void StartConfigurationMode(object? obj)
         {
-            mainWindowViewModel.PlayerViewModel.timer.Stop();
+            mainWindowViewModel.PlayerViewModel._timer.Stop();
 
             IsConfigurationModeVisible = true;
             mainWindowViewModel.PlayerViewModel.IsPlayerModeVisible = false;

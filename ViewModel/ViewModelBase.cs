@@ -11,6 +11,5 @@ namespace Laboration_3.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
     }
 }

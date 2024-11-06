@@ -9,9 +9,8 @@
              Height="auto" Width="auto" MinWidth="800">
 
     <Menu>
-        <!--mnu:File-->
         <MenuItem Header="_File">
-            <MenuItem Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.OpenPackDialogCommand}"
+            <MenuItem Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.OpenDialogCommand}"
                       Header="_New Question Pack"
                       Icon="{fa:Icon FolderPlus}"/>
 
@@ -46,7 +45,7 @@
                       InputGestureText="Alt+F4"/>
         </MenuItem>
 
-        <!--mnu:Edit-->
+
         <MenuItem Header="_Edit">
             <MenuItem Command="{Binding ConfigurationViewModel.AddQuestionCommand}"
                       Header="_Add Questions"
@@ -64,7 +63,7 @@
                       InputGestureText="Ctrl+O"/>
         </MenuItem>
 
-        <!--mnu:View-->
+
         <MenuItem Header="_View">
             <MenuItem Command="{Binding PlayerViewModel.SwitchToPlayModeCommand}"
                       Header="_Play"

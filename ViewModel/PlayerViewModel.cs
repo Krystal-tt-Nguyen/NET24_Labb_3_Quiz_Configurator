@@ -1,6 +1,6 @@
 ﻿using Laboration_3.Command;
 using Laboration_3.Model;
-using System.Windows;
+using System.Collections.ObjectModel;
 using System.Windows.Threading;
 
 namespace Laboration_3.ViewModel
@@ -10,7 +10,7 @@ namespace Laboration_3.ViewModel
         private readonly MainWindowViewModel? mainWindowViewModel;
         public QuestionPackViewModel? ActivePack { get => mainWindowViewModel.ActivePack; }
 
-        public DispatcherTimer timer;
+        public DispatcherTimer _timer;
         private int _timeLimit;
         public int TimeLimit
         {
@@ -22,11 +22,13 @@ namespace Laboration_3.ViewModel
             }
         }
 
+
         private int correctAnswerIndex;
         private int currentQuestionIndex;
         private int playerAnswerIndex;
         private int amountcorrectAnswers;
         private Random rnd = new Random();
+
 
         private string _correctAnswer;
         public string CorrectAnswer
@@ -94,6 +96,7 @@ namespace Laboration_3.ViewModel
                 RaisePropertyChanged();
             }
         }
+        public List<Question> ShuffledQuestions { get; set; }
 
 
         private bool _isPlayerModeVisible;
@@ -130,7 +133,6 @@ namespace Laboration_3.ViewModel
         }
 
 
-
         private bool[] _checkmarkVisibilities;
         public bool[] CheckmarkVisibilities
         {
@@ -152,7 +154,6 @@ namespace Laboration_3.ViewModel
                 RaisePropertyChanged();
             }
         }
-
 
 
         public DelegateCommand SwitchToPlayModeCommand { get; }
@@ -177,14 +178,15 @@ namespace Laboration_3.ViewModel
             IsResultModeVisible = false;
             mainWindowViewModel.ConfigurationViewModel.IsConfigurationModeVisible = false;
 
-            if (timer == null)
+            if (_timer == null)
             {
-                timer = new DispatcherTimer();
-                timer.Interval = TimeSpan.FromSeconds(1);
-                timer.Tick += OnTimerTick;
+                _timer = new DispatcherTimer();
+                _timer.Interval = TimeSpan.FromSeconds(1);
+                _timer.Tick += OnTimerTick;
             }
 
             Questions = ActivePack.Questions.ToList();
+            ShuffledQuestions = ActivePack.Questions.OrderBy(a => rnd.Next()).ToList();
             currentQuestionIndex = 0;
             amountcorrectAnswers = 0;
 
@@ -197,6 +199,7 @@ namespace Laboration_3.ViewModel
             {
                 return false;
             }
+
             return (PlayButtonIsEnable = !IsPlayerModeVisible) && ActivePack.Questions.Count > 0; 
         }
        
@@ -208,7 +211,7 @@ namespace Laboration_3.ViewModel
             }
             else
             {
-                timer.Stop();
+                _timer.Stop();
                 AwaitDisplayCorrectAnswerAsync(); 
             }
         } 
@@ -216,7 +219,7 @@ namespace Laboration_3.ViewModel
         private void LoadNextQuestion()
         {
             TimeLimit = ActivePack.TimeLimitInSeconds;
-            timer.Start();
+            _timer.Start();
 
             ResetChecksAndCrossVisibility();
 
@@ -231,17 +234,17 @@ namespace Laboration_3.ViewModel
             }
         }
 
-        private void GetNextQuestion()
-        {
-            CurrentQuestion = ActivePack.Questions[currentQuestionIndex].Query;
-            CorrectAnswer = ActivePack.Questions[currentQuestionIndex].CorrectAnswer;
+        private void GetNextQuestion()  
+        {            
+            CurrentQuestion = ShuffledQuestions[currentQuestionIndex].Query;
+            CorrectAnswer = ShuffledQuestions[currentQuestionIndex].CorrectAnswer;
 
             List<string> Answers = new List<string>
             {
-                ActivePack.Questions[currentQuestionIndex].CorrectAnswer,
-                ActivePack.Questions[currentQuestionIndex].IncorrectAnswers[0],
-                ActivePack.Questions[currentQuestionIndex].IncorrectAnswers[1],
-                ActivePack.Questions[currentQuestionIndex].IncorrectAnswers[2]
+                ShuffledQuestions[currentQuestionIndex].CorrectAnswer,
+                ShuffledQuestions[currentQuestionIndex].IncorrectAnswers[0],
+                ShuffledQuestions[currentQuestionIndex].IncorrectAnswers[1],
+                ShuffledQuestions[currentQuestionIndex].IncorrectAnswers[2]
             };
   
             ShuffledAnswers = Answers.OrderBy(a => rnd.Next()).ToList();
@@ -265,7 +268,7 @@ namespace Laboration_3.ViewModel
 
         private async Task DisplayCorrectAnswerAsync()
         {
-            timer.Stop();
+            _timer.Stop();
 
             if (playerAnswerIndex != -1)
             {
@@ -281,7 +284,6 @@ namespace Laboration_3.ViewModel
             }
 
             CheckmarkVisibilities[correctAnswerIndex] = true;
-
             UpdateCommandStates();
 
             await Task.Delay(2000);
@@ -292,7 +294,7 @@ namespace Laboration_3.ViewModel
 
         private void ResetChecksAndCrossVisibility()
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < CheckmarkVisibilities.Length; i++)
             {
                 CheckmarkVisibilities[i] = false;
                 CrossVisibilities[i] = false;
@@ -303,8 +305,8 @@ namespace Laboration_3.ViewModel
 
         private void SwitchToResultView()
         {
-            timer.Stop();
-            timer = null;
+            _timer.Stop();
+            _timer = null;
             
             IsResultModeVisible = true;
             IsPlayerModeVisible = false;
@@ -325,5 +327,6 @@ namespace Laboration_3.ViewModel
             mainWindowViewModel.ConfigurationViewModel.DeleteQuestionCommand.RaiseCanExecuteChanged();
             mainWindowViewModel.ConfigurationViewModel.SwitchToConfigurationModeCommand.RaiseCanExecuteChanged();
         }
+
     }
 }

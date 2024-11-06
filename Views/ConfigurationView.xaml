@@ -26,7 +26,6 @@
             <RowDefinition Height="3*"/>
         </Grid.RowDefinitions>
 
-        <!--Default Question Pack-->
         <Grid Grid.Row ="0" 
               Grid.Column="0">
             <Grid.ColumnDefinitions>
@@ -90,19 +89,21 @@
                  Grid.RowSpan="2" 
                  ItemsSource="{Binding ActivePack.Questions}" 
                  Margin="10 0 10 10"
-                 SelectedItem="{Binding SelectedQuestion, UpdateSourceTrigger=PropertyChanged}">
+                 SelectedItem="{Binding SelectedQuestion, UpdateSourceTrigger=PropertyChanged}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
                         <TextBlock Text="Question" FontWeight="Bold"/>
-                        <TextBlock Text="{Binding Query}"/>
+                        <TextBlock Text="{Binding Query}"
+                                   TextWrapping="Wrap"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <!--Questions-->
+
         <Grid Grid.Column="1" 
               Grid.Row="1">
             <Grid.RowDefinitions>
@@ -122,6 +123,7 @@
                      Margin="20 0" 
                      Padding="5"
                      Text ="{Binding SelectedQuestion.Query, UpdateSourceTrigger=PropertyChanged}" 
+                     TextWrapping="Wrap"
                      Visibility="{Binding TextVisibility, Converter={StaticResource VisibilityConverter}}"/>
         </Grid>
 

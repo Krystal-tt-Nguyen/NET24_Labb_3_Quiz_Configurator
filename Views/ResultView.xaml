@@ -24,7 +24,6 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!--Result-->
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -47,8 +46,6 @@
             </Label>
         </Grid>
 
-
-        <!--Btn-->
         <Button Background="White"
                 Command="{Binding SwitchToPlayModeCommand}"
                 FontSize="20"

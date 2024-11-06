@@ -17,7 +17,5 @@ namespace Laboration_3.Model
             TimeLimitInSeconds = timeLimitInSeconds;
             Questions = new List<Question>();
         }
-
-
     }
 }
