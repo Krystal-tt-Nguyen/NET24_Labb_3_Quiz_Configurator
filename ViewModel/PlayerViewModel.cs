@@ -314,7 +314,6 @@ namespace Laboration_3.ViewModel
         private void SwitchToResultView()
         {
             _timer.Stop();
-            _timer = null;
             
             IsResultModeVisible = true;
             IsPlayerModeVisible = false;

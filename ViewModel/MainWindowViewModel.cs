@@ -107,9 +107,6 @@ namespace Laboration_3.ViewModel
             DeletePackIsEnable = true;
             IsFullscreen = false;
 
-            Packs = new ObservableCollection<QuestionPackViewModel>();
-            ActivePack = new QuestionPackViewModel(new QuestionPack("Default Question Pack"));
-
             FilePath = GetFilePath();
             InitializeDataAsync();
 
@@ -207,10 +204,17 @@ namespace Laboration_3.ViewModel
 
         private async Task InitializeDataAsync()
         {
+            Packs = new ObservableCollection<QuestionPackViewModel>();
+
             if (Path.Exists(FilePath))
             {
                 await ReadFromJsonAsync();
                 ActivePack = Packs?.FirstOrDefault();
+            }
+            else
+            {
+                ActivePack = new QuestionPackViewModel(new QuestionPack("Default Question Pack"));
+                Packs.Add(ActivePack);
             }
         }
 
